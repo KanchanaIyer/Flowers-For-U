@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="0fd90636-6a80-471d-b175-98e46ffb6409" name="Flowers 4 U" url="https://flowers4u.surrey.erysthee.com">
+        <fileTransfer rootFolder="/var/www/Flowers4U/" accessType="SFTP" host="10.135.28.131" port="22" sshConfigId="905865a7-20bd-4ca1-8ac5-18c52b6e01e2" sshConfig="user@10.135.28.131:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>
