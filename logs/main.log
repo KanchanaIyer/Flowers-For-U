@@ -1,0 +1,454 @@
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters')], limit=body.get('limit', 10),
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not iterable
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [])], limit=body.get('limit', 10),
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not iterable
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not iterable
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
+                                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'NoneType' object is not iterable
+ERROR:root:The error 'Can't connect to local server through socket '' (111)' occurred
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/database.py", line 14, in connect_to_database
+    connection = connect(
+                 ^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/__init__.py", line 146, in connect
+    connection = connectionclass(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/connections.py", line 85, in __init__
+    super().__init__(*args, **kwargs)
+mariadb.OperationalError: Can't connect to local server through socket '' (111)
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 105, in get_all_products
+    database, cursor = get_cursor()
+                       ^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/database.py", line 40, in get_cursor
+    cursor = connection.cursor(dictionary=True)
+             ^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'cursor'
+ERROR:root:The error 'Can't connect to local server through socket '' (111)' occurred
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/database.py", line 14, in connect_to_database
+    database_config = config.get_database_config()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/__init__.py", line 146, in connect
+    connection = connectionclass(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/connections.py", line 85, in __init__
+    super().__init__(*args, **kwargs)
+mariadb.OperationalError: Can't connect to local server through socket '' (111)
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 105, in get_all_products
+    database, cursor = get_cursor()
+                       ^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/database.py", line 40, in get_cursor
+    return connection, cursor
+             ^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'cursor'
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 113, in get_all_products
+    create_filter_query(filters) if filters else '', limit, n_offset)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 41, in create_filter_query
+    raise InvalidActionError(f"Invalid filter: {str(_filter)}")
+utils.InvalidActionError: Invalid filter: stock greater 2000
+ERROR:root:The error 'Can't connect to local server through socket '' (111)' occurred
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/database.py", line 14, in connect_to_database
+    database_config = config.get_database_config()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/__init__.py", line 146, in connect
+    connection = connectionclass(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/connections.py", line 85, in __init__
+    super().__init__(*args, **kwargs)
+mariadb.OperationalError: Can't connect to local server through socket '' (111)
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 105, in get_all_products
+    database, cursor = get_cursor()
+                       ^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/database.py", line 40, in get_cursor
+    return connection, cursor
+             ^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'cursor'
+ERROR:root:The error 'Can't connect to local server through socket '' (111)' occurred
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/database.py", line 14, in connect_to_database
+    database_config = config.get_database_config()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/__init__.py", line 146, in connect
+    connection = connectionclass(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/connections.py", line 85, in __init__
+    super().__init__(*args, **kwargs)
+mariadb.OperationalError: Can't connect to local server through socket '' (111)
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 105, in get_all_products
+    database, cursor = get_cursor()
+                       ^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/database.py", line 40, in get_cursor
+    return connection, cursor
+             ^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'cursor'
+ERROR:root:The error 'Can't connect to local server through socket '' (111)' occurred
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/database.py", line 14, in connect_to_database
+    database_config = config.get_database_config()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/__init__.py", line 146, in connect
+    connection = connectionclass(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/connections.py", line 85, in __init__
+    super().__init__(*args, **kwargs)
+mariadb.OperationalError: Can't connect to local server through socket '' (111)
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 105, in get_all_products
+    database, cursor = get_cursor()
+                       ^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/database.py", line 40, in get_cursor
+    return connection, cursor
+             ^^^^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'cursor'
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 113, in get_all_products
+    create_filter_query(filters) if filters else '', limit, n_offset)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 41, in create_filter_query
+    raise InvalidActionError(f"Invalid filter: {str(_filter)}")
+utils.InvalidActionError: Invalid filter: stock greater 2000
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 113, in get_all_products
+    create_filter_query(filters) if filters else '', limit, n_offset)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 41, in create_filter_query
+    raise InvalidActionError(f"Invalid filter: {str(_filter)}")
+utils.InvalidActionError: Invalid filter: stock greater 2000
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 113, in get_all_products
+    create_filter_query(filters) if filters else '', limit, n_offset)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 41, in create_filter_query
+    raise InvalidActionError(f"Invalid filter: {str(_filter)}")
+utils.InvalidActionError: Invalid filter: stock greater 2000
+ERROR:root:The error 'Can't connect to local server through socket '' (111)' occurred
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/database.py", line 14, in connect_to_database
+    database_config = config.get_database_config()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/__init__.py", line 146, in connect
+    connection = connectionclass(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/connections.py", line 85, in __init__
+    super().__init__(*args, **kwargs)
+mariadb.OperationalError: Can't connect to local server through socket '' (111)
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 105, in get_all_products
+    database, cursor = get_cursor()
+                       ^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/database.py", line 40, in get_cursor
+    if connection is None:
+             ^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'cursor'
+ERROR:root:The error 'Can't connect to local server through socket '' (111)' occurred
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/database.py", line 14, in connect_to_database
+    database_config = config.get_database_config()
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/__init__.py", line 146, in connect
+    connection = connectionclass(*args, **kwargs)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/mariadb/connections.py", line 85, in __init__
+    super().__init__(*args, **kwargs)
+mariadb.OperationalError: Can't connect to local server through socket '' (111)
+ERROR:apitest:Exception on /api/products [GET]
+Traceback (most recent call last):
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
+    response = self.full_dispatch_request()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 869, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 867, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 852, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 41, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/apitest.py", line 80, in get_products
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/utils.py", line 105, in get_all_products
+    database, cursor = get_cursor()
+                       ^^^^^^^^^^^^
+  File "/var/www/Flowers4U/approot/database.py", line 40, in get_cursor
+    if connection is None:
+             ^^^^^^^^^^^^^^
+AttributeError: 'NoneType' object has no attribute 'cursor'

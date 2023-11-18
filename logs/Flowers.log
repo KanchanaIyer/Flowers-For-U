@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 2023-11-17 03:02:03,977 $(message)s
 Traceback (most recent call last):
   File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/app.py", line 1455, in wsgi_app
@@ -301,3 +302,28 @@ Traceback (most recent call last):
   File "/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages/flask/templating.py", line 99, in _get_source_fast
     raise TemplateNotFound(template)
 jinja2.exceptions.TemplateNotFound: ../webroot/index.html
+=======
+
+2023-11-17 23:15:34,374 $(message)s
+2023-11-17 23:15:34,473 $(message)s
+2023-11-17 23:15:50,921 $(message)s
+2023-11-17 23:15:50,922 $(message)s
+2023-11-17 23:16:05,705 $(message)s
+2023-11-17 23:16:05,707 $(message)s
+2023-11-17 23:16:15,075 $(message)s
+2023-11-17 23:16:15,077 $(message)s
+2023-11-17 23:16:17,775 $(message)s
+2023-11-17 23:16:17,775 $(message)s
+2023-11-17 23:20:45,280 $(message)s
+2023-11-17 23:20:45,282 $(message)s
+2023-11-17 23:21:03,962 $(message)s
+2023-11-17 23:21:03,962 $(message)s
+2023-11-18 01:33:29,083 $(message)s
+2023-11-18 01:33:29,086 $(message)s
+2023-11-18 01:33:51,277 $(message)s
+2023-11-18 01:33:51,278 $(message)s
+2023-11-18 01:34:08,462 $(message)s
+2023-11-18 01:34:08,462 $(message)s
+2023-11-18 01:34:16,802 $(message)s
+2023-11-18 01:34:16,802 $(message)s
+>>>>>>> origin/master
