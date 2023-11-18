@@ -7,6 +7,11 @@
           <mappings>
             <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
           </mappings>
+          <excludedPaths>
+            <excludedPath path="/logs/Flowers.log" />
+            <excludedPath path="/approot/config.ini" />
+            <excludedPath path="/logs/error.log" />
+          </excludedPaths>
         </serverdata>
       </paths>
     </serverData>

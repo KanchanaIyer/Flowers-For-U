@@ -77,7 +77,7 @@ def get_products():
     except Exception as e:
         return handle_json_error(e)
 
-    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters')], limit=body.get('limit', 10),
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
                                            offset=body.get('offset', 0))
 
 
