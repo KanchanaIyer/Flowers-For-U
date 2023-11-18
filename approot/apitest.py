@@ -197,7 +197,7 @@ def api_product_buy(product_id):
     :return: A JSON object indicating the status of the purchase.
     """
     # Check if https
-    if request.headers.get('X-Forwarded-Proto') != 'https':
+    if request.scheme != "https":
         return error_response("HTTPS Required", 400)
 
     try:
