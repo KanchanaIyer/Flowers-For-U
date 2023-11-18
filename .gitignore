@@ -1,5 +1,8 @@
 Flowers2/**
 approot/Flowers/**
+logs/**
+.idea/**
 **/__pycache__/**
 **/*.conf
 **/*.ini
+/.idea/
