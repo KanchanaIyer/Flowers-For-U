@@ -77,7 +77,7 @@ def get_products():
     except Exception as e:
         return handle_json_error(e)
 
-    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters')], limit=body.get('limit', 10),
+    return ProductManager.get_all_products(filters=[Filter.from_dict(_filter) for _filter in body.get('filters', [{}])], limit=body.get('limit', 10),
                                            offset=body.get('offset', 0))
 
 
@@ -197,7 +197,7 @@ def api_product_buy(product_id):
     :return: A JSON object indicating the status of the purchase.
     """
     # Check if https
-    if request.headers.get('X-Forwarded-Proto') != 'https':
+    if request.scheme != "https":
         return error_response("HTTPS Required", 400)
 
     try:

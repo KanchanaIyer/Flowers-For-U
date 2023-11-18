@@ -6,7 +6,12 @@ from database import get_cursor
 import models
 VALID_FILTERS = ['name', 'price']
 VALID_FILTER_RULES = ['contains', 'equals', 'greater', 'less']
+FILTER_MAP = {
+    'name': ['contains'],
+    'price': ['equals', 'greater', 'less'],
+    'stock': ['equals', 'greater', 'less', 'exists'],
 
+}
 
 class InvalidActionError(Exception):
     pass
@@ -18,19 +23,23 @@ def create_filter_query(filters: list[models.Filter]):
     :param filters: List of filters to apply
     :return: A string containing the query
     """
+
     query = ""
     for _filter in filters:
-        if _filter.field in VALID_FILTERS and _filter.rule in VALID_FILTER_RULES:
-            if _filter.rule == 'contains':
-                query += f"AND {_filter.field} LIKE '%{_filter.value}%' "
-            elif _filter.rule == 'equals':
-                query += f"AND {_filter.field} = '{_filter.value}' "
-            elif _filter.rule == 'greater':
-                query += f"AND {_filter.field} > '{_filter.value}' "
-            elif _filter.rule == 'less':
-                query += f"AND {_filter.field} < '{_filter.value}' "
-        else:
-            raise ValueError(f"Invalid filter: {_filter}")
+        if _filter:
+            if _filter.field in FILTER_MAP.keys() and _filter.rule in FILTER_MAP[_filter.field]:
+                if _filter.rule == 'contains':
+                    query += f"AND {_filter.field} LIKE '%{_filter.value}%' "
+                elif _filter.rule == 'equals':
+                    query += f"AND {_filter.field} = '{_filter.value}' "
+                elif _filter.rule == 'greater':
+                    query += f"AND {_filter.field} > '{_filter.value}' "
+                elif _filter.rule == 'less':
+                    query += f"AND {_filter.field} < '{_filter.value}' "
+                elif _filter.rule == 'exists':
+                    query += f"AND {_filter.field} > '{0}' "
+            else:
+                raise InvalidActionError(f"Invalid filter: {str(_filter)} {FILTER_MAP.get(_filter.field, [])}")
     return query
 
 
@@ -108,6 +117,8 @@ class ProductManager:
             return success_response("Success", data)
         except mariadb.Error as e:
             return handle_database_error(e)
+        except InvalidActionError as e:
+            return handle_validation_error(str(e))
 
     @staticmethod
     def add_product(product_data):
@@ -124,6 +135,8 @@ class ProductManager:
             return success_response("Inserted product successfully")
         except mariadb.Error as e:
             return handle_database_error(e)
+        except KeyError as e:
+            return handle_validation_error(f"Missing required field: {str(e)}")
 
     @staticmethod
     def get_product_by_id(product_id):

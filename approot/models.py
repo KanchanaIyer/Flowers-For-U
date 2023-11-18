@@ -13,6 +13,11 @@ class Filter:
     rule: str
     value: str
 
+    def __str__(self):
+        return f"{self.field} {self.rule} {self.value}"
+
     @classmethod
     def from_dict(cls, data: dict):
+        if not data:
+            return None
         return cls(**data)
