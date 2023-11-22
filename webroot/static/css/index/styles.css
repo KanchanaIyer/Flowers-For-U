@@ -213,7 +213,7 @@ p {
 }
 /* Home Page */
 #hero{
-    background-image:  url("img/logo.png");
+    background-image:  url("/images/page_resources/common/logo.png");
     height: 35vh;
     width: 100%;
     background-size: cover;
@@ -230,7 +230,7 @@ p {
     padding-bottom: 15px;
 }
 #hero button{
-    background-image: url("img/button.png");
+    background-image: url("/images/page_resources/common/button.png");
     background-color: transparent;
     color: #1f041d;
     height: 50px;
@@ -393,7 +393,7 @@ button.white{
     left: 0;
     right: 0;
     bottom: 0;
-    background: url("img/whiteflowersunsplash.jpg") center/cover fixed;
+    background: url("/images/page_resources/index/whiteflowersunsplash.jpg") center/cover fixed;
     filter: blur(8px); /* Adjust the blur value */
     z-index: -1;
 }
@@ -418,6 +418,6 @@ button.white{
     border: 10px solid;
 }
 #sm-banner1 .banner-box2{
-    background: url("img/whiteflowersunsplash.jpg") center/cover fixed;
+    background: url("/images/page_resources/index/whiteflowersunsplash.jpg") center/cover fixed;
 }
 /* Other styles for text content can go here */

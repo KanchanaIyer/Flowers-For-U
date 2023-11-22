@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index/styles.css') }}">
     <!-- This is a link for fonts-->
     <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/page_resources/common/ForFlowers-removebg.png') }}" />
 
 </head>
 <body>
@@ -25,7 +27,7 @@
     took that header and implemented it below--->
     <section id="header">
         <a href="#"> 
-            <img src="img/ForFlowers-removebg.png" alt="Logo" class="logo"/>
+            <img src="{{ url_for('static', filename='images/page_resources/common/ForFlowers-removebg.png') }}" alt="Logo" class="logo"/>
         </a>
         <div>
             <ul id="navbar">
@@ -56,27 +58,27 @@
     <!-- This is the small boxes full of features for uses to click on -->
     <section id="feature" class="section-p1">
         <div class="fe-box">
-            <img src="img/features/f1.png" alt="">
+            <img src="{{ url_for('static', filename='images/page_resources/index/features/f1.png') }}" alt="Free Shipping">
             <h6>Free Shipping</h6>
         </div>
         <div class="fe-box">
-            <img src="img/features/f3.png" alt="">
+            <img src="{{ url_for('static', filename='images/page_resources/index/features/f3.png') }}" alt="Black Friday Deals">
             <h6>Black Friday Deals!</h6>
         </div>
         <div class="fe-box">
-            <img src="img/features/f5.png" alt="">
+            <img src="{{ url_for('static', filename='images/page_resources/index/features/f5.png') }}" alt="Buy one get one free">
             <h6>Buy 1 Get 1!</h6>
         </div>
         <div class="fe-box">
-            <img src="img/features/f6.png" alt="">
+            <img src="{{ url_for('static', filename='images/page_resources/index/features/f6.png') }}" alt="24/7 Customer Service">
             <h6>24/7 Customer Service</h6>
         </div>
         <div class="fe-box">
-            <img src="img/features/f2.png" alt="">
+            <img src="{{ url_for('static', filename='images/page_resources/index/features/f2.png') }}" alt="Save Time">
             <h6>Save Time!</h6>
         </div>
         <div class="fe-box">
-            <img src="img/features/f4.png" alt="">
+            <img src="{{ url_for('static', filename='images/page_resources/index/features/f4.png') }}" alt="Gifts">
             <h6>New Gifts!</h6>
         </div>
         <div id="features"></div>
@@ -88,7 +90,7 @@
         <p>Modern Fall Collection </p>
         <div class="pro-container">
             <div class="pro">
-                <img src="img\bouquet1.png" alt="" />
+                <img src="{{ url_for('static', filename='images/products/test/bouquet1.png') }}" alt="" />
                 <div class="des">
                     <span>Olivia's Flower Shop</span>
                     <h5>Cream/Faint Bridal Bouquet</h5>
@@ -103,7 +105,7 @@
                 <a href="#"> <i class="fal fa-shopping-cart cart"></i> </a>
             </div>
             <div class="pro">
-                <img src="img/tulips-unsplash.jpg" alt="" />
+                <img src="{{ url_for('static', filename='images/products/test/tulips-unsplash.jpg') }}" alt="" />
                 <div class="des">
                     <span>Olivia's Flower Shop</span>
                     <h5>Cherry Red Tulip Bouquet</h5>
@@ -118,7 +120,7 @@
                 <a href="#"> <i class="fal fa-shopping-cart cart"></i> </a>
             </div>
             <div class="pro">
-                <img src="img/roses-unsplash.jpg" alt="" />
+                <img src="{{ url_for('static', filename='images/products/test/roses-unsplash.jpg') }}" alt="" />
                 <div class="des">
                     <span>Morris Flourist</span>
                     <h5>Elegant Roses Bouquet</h5>
@@ -134,7 +136,7 @@
                 <a href="#"> <i class="fal fa-shopping-cart cart"></i> </a>
             </div>
             <div class="pro">
-                <img src="img/Grande-unsplash.jpg" alt="" />
+                <img src="{{ url_for('static', filename='images/products/test/Grande-unsplash.jpg') }}" alt="" />
                 <div class="des">
                     <span>Olivia's Flower Shop</span>
                     <h5>Grande Tropical Bouquet</h5>
@@ -197,7 +199,7 @@
     </section>
     <footer class="section-p1">
         <div class="col">
-            <img class="logo" src="img/ForFlowers-removebg.png" alt="" />
+            <img class="logo" src="{{ url_for('static', filename='images/page_resources/common/ForFlowers-removebg.png') }}" alt="Logo" />
             <h4>Contact</h4>
             <p><strong>Address:</strong> 1st ave, Manhattan, NY 10014</p>
             <p><strong>Phone Number:</strong> (432) 892-1990</p>
@@ -235,8 +237,8 @@
             <h4>Install Our App Today!</h4>
             <p>From App Store or Google Play</p>
             <div class="row">
-                <img src="img/pay/app.jpg" alt="">
-                <img src="img/pay/play.jpg" alt="">
+                <img src="{{ url_for('static', filename='images/page_resources/common/pay/app.jpg') }}" alt="Apple App Store Logo">
+                <img src="{{ url_for('static', filename='images/page_resources/common/pay/play.jpg') }}" alt="Google Play Store Logo">
             </div>
         </div>
         <div class="copyright">
