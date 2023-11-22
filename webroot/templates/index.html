@@ -10,7 +10,7 @@
 
 </head>
 <body>
-    <script src= "../static/js/script.js"></script>
+    <script src= "{{ url_for('static', filename='js/index/script.js') }}"></script>
     <!--{/*<nav class="nav-menu">
         <ul>
             <li><a href="index.html">Home</a></li>
@@ -31,7 +31,7 @@
             <ul id="navbar">
                 <li><a classname="active" href="#">Home</a></li>
                 <li><a href="#about">About</a></li>
-                <li><a href="flowers.html">Flowers</a></li>
+                <li><a href="{{ url_for('webpages.flowers') }}">Flowers</a></li>
                 <li><a href="#features">Gifts</a></li>
                 <li><a href="#about">Updates</a></li>
                 <li><a href="#about">
@@ -48,7 +48,7 @@
         <h2>Rare Value Deal</h2>
         <h1> On all products</h1>
         <p> <strong> Save more with coupons and new black-friday sale of up to <u>90%</u> off! </strong></p>
-        <a href="flowers.html">
+        <a href="{{ url_for('webpages.flowers') }}">
             <button> Bouquets</button>
         </a>
     </section>
@@ -158,7 +158,7 @@
             <h4>New Deals!</h4>
             <h2>Buy 1 Get 1</h2>
             <span>Beautiful and Fresh classic flowers</span>
-            <a href="flowers.html">
+            <a href="{{ url_for('webpages.flowers') }}">
                 <button class="white">Learn More</button>   
             </a>
               
@@ -175,7 +175,7 @@
             <h4>It ends by December 20!</h4>
             <h2>-----------</h2>
             <span>Bouquets/Gift Baskets</span>
-            <a href="flowers.html">
+            <a href="{{ url_for('webpages.flowers') }}">
                 <button class="white" >Collection</button>   
             </a>
               
