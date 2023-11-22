@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowers For U</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav class="nav-menu">
+        <ul>
+            <li><a href="{{ url_for('webpages.home') }}">Home</a></li>
+            <li><a href="{{ url_for('webpages.home') }}">About US</a></li>
+            <li><a href="{{ url_for('webpages.home') }}">Flower Bouquets</a></li>
+            <li><a href="{{ url_for('webpages.home') }}">Gourmet Goods</a></li>
+            <li><a href="{{ url_for('webpages.home') }}">Gift Baskets</a></li>
+            <li><a href="{{ url_for('webpages.home') }}">Updates</a></li>
+            <li><a href="{{ url_for('webpages.home') }}">Account</a></li>
+        </ul>
+    </nav>
+
+    <header>
+        <h1>Flowers For U</h1>
+        <p>Welcome to Flowers For U where you will find the most high quality flowers right at your finger tips!</p>
+    </header>
+
+    <header class="main-header" role="banner">
+        <img src="https://media.istockphoto.com/id/1433418099/photo/flower-background-with-roses-ranunculus-pumpkin-hypericum-chrysanthemum-spring-summer-floral.webp?b=1&s=170667a&w=0&k=20&c=ms38CQfF0oVbCjVkRK9UGF7R_kFYnIe0slQgnZWdT44=" alt="Banner Image"/>
+    </header>
+
+
+    <div id="banner"></div>
+
+    <footer>
+        <p>© 2023 Flowers For U</p>
+    </footer>
+</body>
+</html>

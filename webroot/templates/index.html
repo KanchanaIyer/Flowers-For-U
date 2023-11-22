@@ -4,22 +4,248 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flowers For U</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index/styles.css') }}">
+    <!-- This is a link for fonts-->
+    <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" />
+
 </head>
 <body>
-    <nav class="nav-menu">
+    <script src= "../static/js/script.js"></script>
+    <!--{/*<nav class="nav-menu">
         <ul>
-            <li><a href="{{ url_for('webpages.home') }}">Home</a></li>
-            <li><a href="{{ url_for('webpages.home') }}">About US</a></li>
-            <li><a href="{{ url_for('webpages.home') }}">Flower Bouquets</a></li>
-            <li><a href="{{ url_for('webpages.home') }}">Gourmet Goods</a></li>
-            <li><a href="{{ url_for('webpages.home') }}">Gift Baskets</a></li>
-            <li><a href="{{ url_for('webpages.home') }}">Updates</a></li>
-            <li><a href="{{ url_for('webpages.home') }}">Account</a></li>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="about.html">About US</a></li>
+            <li><a href="bouquet.html">Flower Bouquets</a></li>
+            <li><a href="gourmet.html">Gourmet Goods</a></li>
+            <li><a href="Gift.html">Gift Baskets</a></li>
+            <li><a href="update.html">Updates</a></li>
+            <li><a href="account.html">Account</a></li>
         </ul>
-    </nav>
+    </nav>}  
+    took that header and implemented it below--->
+    <section id="header">
+        <a href="#"> 
+            <img src="img/ForFlowers-removebg.png" alt="Logo" class="logo"/>
+        </a>
+        <div>
+            <ul id="navbar">
+                <li><a classname="active" href="#">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="flowers.html">Flowers</a></li>
+                <li><a href="#features">Gifts</a></li>
+                <li><a href="#about">Updates</a></li>
+                <li><a href="#about">
+                    <i class="fal fa-shopping-cart cart"></i>
+                </a></li>
+            </ul>
+        </div>
 
-    <header>
+    </section>
+    <!-- This is the front page of the home page-->
+    <section id="hero">
+        <br></br>
+        <h4>Trade-in-offer</h4>
+        <h2>Rare Value Deal</h2>
+        <h1> On all products</h1>
+        <p> <strong> Save more with coupons and new black-friday sale of up to <u>90%</u> off! </strong></p>
+        <a href="flowers.html">
+            <button> Bouquets</button>
+        </a>
+    </section>
+    
+    <!-- This is the small boxes full of features for uses to click on -->
+    <section id="feature" class="section-p1">
+        <div class="fe-box">
+            <img src="img/features/f1.png" alt="">
+            <h6>Free Shipping</h6>
+        </div>
+        <div class="fe-box">
+            <img src="img/features/f3.png" alt="">
+            <h6>Black Friday Deals!</h6>
+        </div>
+        <div class="fe-box">
+            <img src="img/features/f5.png" alt="">
+            <h6>Buy 1 Get 1!</h6>
+        </div>
+        <div class="fe-box">
+            <img src="img/features/f6.png" alt="">
+            <h6>24/7 Customer Service</h6>
+        </div>
+        <div class="fe-box">
+            <img src="img/features/f2.png" alt="">
+            <h6>Save Time!</h6>
+        </div>
+        <div class="fe-box">
+            <img src="img/features/f4.png" alt="">
+            <h6>New Gifts!</h6>
+        </div>
+        <div id="features"></div>
+    </section>
+
+    <!-- This is the products section-->
+    <section id="product1" class="section-p1">
+        <h2>Featured Products</h2>
+        <p>Modern Fall Collection </p>
+        <div class="pro-container">
+            <div class="pro">
+                <img src="img\bouquet1.png" alt="" />
+                <div class="des">
+                    <span>Olivia's Flower Shop</span>
+                    <h5>Cream/Faint Bridal Bouquet</h5>
+                    <div class="star">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4>$60.00</h4>
+                </div>
+                <a href="#"> <i class="fal fa-shopping-cart cart"></i> </a>
+            </div>
+            <div class="pro">
+                <img src="img/tulips-unsplash.jpg" alt="" />
+                <div class="des">
+                    <span>Olivia's Flower Shop</span>
+                    <h5>Cherry Red Tulip Bouquet</h5>
+                    <div class="star">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4>$40.00</h4>
+                </div>
+                <a href="#"> <i class="fal fa-shopping-cart cart"></i> </a>
+            </div>
+            <div class="pro">
+                <img src="img/roses-unsplash.jpg" alt="" />
+                <div class="des">
+                    <span>Morris Flourist</span>
+                    <h5>Elegant Roses Bouquet</h5>
+                    <div class="star">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4>$140.00</h4>
+                </div>
+                <a href="#"> <i class="fal fa-shopping-cart cart"></i> </a>
+            </div>
+            <div class="pro">
+                <img src="img/Grande-unsplash.jpg" alt="" />
+                <div class="des">
+                    <span>Olivia's Flower Shop</span>
+                    <h5>Grande Tropical Bouquet</h5>
+                    <div class="star">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <h4>$182.00</h4>
+                </div>
+                <a href="#"> <i class="fal fa-shopping-cart cart"></i> </a>
+            </div>
+            
+        </div>
+    </section>
+
+
+    <section id="sm-banner" class="section-p1">
+        <div class="banner-box">
+            <h4>New Deals!</h4>
+            <h2>Buy 1 Get 1</h2>
+            <span>Beautiful and Fresh classic flowers</span>
+            <a href="flowers.html">
+                <button class="white">Learn More</button>   
+            </a>
+              
+        </div>
+    </section>
+    <section id="sm-banner1" class="section-p1">
+        <div class="banner-box">
+            <h4>Fall Stock</h4>
+            <h2>Limited Time</h2>
+            <span></span>
+                
+        </div>
+        <div class="banner-box banner-box2">
+            <h4>It ends by December 20!</h4>
+            <h2>-----------</h2>
+            <span>Bouquets/Gift Baskets</span>
+            <a href="flowers.html">
+                <button class="white" >Collection</button>   
+            </a>
+              
+        </div>
+    </section>
+
+    <section id="about" class="section-p1">
+        <div class="banner-box3">
+            <h2>Indulge in Nature's Masterpiece</h2>
+            <h2>_________________</h2>
+            <h4>From Humble Beginnings to Blooming Success & Elegance</h4>
+           
+        </div>
+        <div class="banner-box banner-box4">
+            <p>Our journey began amidst the bustling streets of New York City, <br> where a small florist shop aimed to bring the joy of blossoms to every doorstep. <br>What started as a modest venture evolved into a sophisticated high-end flower shop,<br> weaving modern aesthetics with timeless floral artistry.</p>
+            <span>Enjoy our wide range of goods and services, `Exquisite Bouquets and Gift Baskets` from our many years of experience.</span>
+            <h2>_________________</h2>
+        </div>
+    </section>
+    <footer class="section-p1">
+        <div class="col">
+            <img class="logo" src="img/ForFlowers-removebg.png" alt="" />
+            <h4>Contact</h4>
+            <p><strong>Address:</strong> 1st ave, Manhattan, NY 10014</p>
+            <p><strong>Phone Number:</strong> (432) 892-1990</p>
+            <p><strong>Email Address:</strong> info@flowers.com</p>
+            <p><strong>Hours:</strong> 10-10, Mon - Fri</p>
+            <div class="follow">
+                <h4>Follow Us</h4>
+                <div class="icon">
+                    <i class="fab fa-facebook-f"></i>
+                    <i class="fab fa-twitter"></i>
+                    <i class="fab fa-instagram"></i>
+                    <i class="fab fa-pinterest"></i>
+                </div>
+                
+            </div>
+        </div>
+        <div class="col">
+            <h4>About</h4>
+            <a href="#">About Us</a>
+            <a href="#">Our Story</a>
+            <a href="#">Services</a>
+            <a href="#">Contact Information</a>
+            <a href="#">Privacy Policy</a>
+        </div>
+        <div class="col">
+            <h4>My Account</h4>
+            <a href="#">Sign In</a>
+            <a href="#">View Cart</a>
+            <a href="#">My wishlist</a>
+            <a href="#">Tracking Information</a>
+            <a href="#">Privacy Policy</a>
+        </div>
+
+        <div class="col install">
+            <h4>Install Our App Today!</h4>
+            <p>From App Store or Google Play</p>
+            <div class="row">
+                <img src="img/pay/app.jpg" alt="">
+                <img src="img/pay/play.jpg" alt="">
+            </div>
+        </div>
+        <div class="copyright">
+            <p>© 2023 Flowers For U</p>
+        </div>
+        
+    </footer>
+
+    <!--<header>
         <h1>Flowers For U</h1>
         <p>Welcome to Flowers For U where you will find the most high quality flowers right at your finger tips!</p>
     </header>
@@ -29,10 +255,10 @@
     </header>
 
 
-    <div id="banner"></div>
+    <div id="about"></div>
 
-    <footer>
-        <p>© 2023 Flowers For U</p>
-    </footer>
+    <footer class="copyright">
+        
+    </footer>-->
 </body>
 </html>
