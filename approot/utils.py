@@ -1,10 +1,12 @@
 from functools import wraps
 
 import mariadb
-from flask import jsonify, Response
+from flask import jsonify, Response, request
 import json
 from contextlib import contextmanager
 
+from approot.crypto import hash_key, hash_password, check_password
+from approot.sessions import get_session
 from database import get_cursor
 import models
 
@@ -22,8 +24,23 @@ class InvalidActionError(Exception):
     pass
 
 
-class ProducetNotFoundError(Exception):
+class NotFoundError(Exception):
     pass
+
+
+def validate_key_(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        user_key = request.cookies.get('key')
+        session = get_session()
+        print(str(session))
+        session_key = get_session().get('key')
+        if not user_key or (user_key != session_key):
+            return handle_unauthorized()
+
+        return func(*args, **kwargs)
+
+    return wrapper
 
 
 def create_filter_query(filters: list[models.Filter]):
@@ -55,7 +72,7 @@ def create_filter_query(filters: list[models.Filter]):
 def success_response(message, data=None):
     if data is None:
         data = dict()
-    return jsonify({"status": "success", "message": message, "data": data})
+    return jsonify({"status": "success", "message": message, "data": data}), 200
 
 
 def error_response(message, status_code=500, data=None):
@@ -133,14 +150,15 @@ def database_transaction_helper(func):
             except mariadb.Error as e:
                 database.rollback()
                 return handle_database_error(e)
-    return wrapper
 
+    return wrapper
 
 
 class ReviewManager:
     """
     This class contains static methods for managing reviews.
     """
+
     @staticmethod
     @database_transaction_helper
     def get_all_reviews(filters=None, limit=10, offset=0, cursor=None, database=None):
@@ -153,14 +171,15 @@ class ReviewManager:
             data = cursor.fetchall()
 
             if not data or all(all(x for x in obj.values()) for obj in data):
-                raise ProducetNotFoundError("No reviews found which match the provided filters or limit/offset")
+                raise NotFoundError("No reviews found which match the provided filters or limit/offset")
 
             return success_response("Success", data)
 
         except InvalidActionError as e:
             return handle_validation_error(str(e))
-        except ProducetNotFoundError as e:
+        except NotFoundError as e:
             return handle_not_found_error(str(e))
+
 
 class ProductManager:
     """
@@ -181,13 +200,13 @@ class ProductManager:
             print(data)
 
             if not data or all(all(not x for x in obj.values()) for obj in data):
-                raise ProducetNotFoundError("No products found which match the provided filters or limit/offset")
+                raise NotFoundError("No products found which match the provided filters or limit/offset")
 
             return success_response("Success", data)
 
         except InvalidActionError as e:
             return handle_validation_error(str(e))
-        except ProducetNotFoundError as e:
+        except NotFoundError as e:
             return handle_not_found_error(str(e))
 
     @staticmethod
@@ -211,11 +230,11 @@ class ProductManager:
             data = cursor.fetchall()
 
             if data is None:
-                raise ProducetNotFoundError("No product found with the provided ID. Cannot show")
+                raise NotFoundError("No product found with the provided ID. Cannot show")
 
             return success_response("Success", data)
 
-        except ProducetNotFoundError as e:
+        except NotFoundError as e:
             return handle_not_found_error(str(e))
 
     @staticmethod
@@ -225,7 +244,7 @@ class ProductManager:
             cursor.execute("SELECT * FROM products WHERE product_id = ? FOR UPDATE", (product_id,))
 
             if cursor.fetchone() is None:
-                raise ProducetNotFoundError("No product found with the provided ID. Cannot update")
+                raise NotFoundError("No product found with the provided ID. Cannot update")
 
             cursor.execute("UPDATE products SET NAME = COALESCE(?, NAME), PRICE = COALESCE(?, PRICE),"
                            " DESCRIPTION = COALESCE(?, DESCRIPTION), STOCK = COALESCE(?, STOCK), LOCATION = COALESCE(?, LOCATION)"
@@ -235,7 +254,7 @@ class ProductManager:
             database.commit()
             return success_response("Updated product successfully")
 
-        except ProducetNotFoundError as e:
+        except NotFoundError as e:
             return handle_not_found_error(str(e))
 
     @staticmethod
@@ -245,14 +264,14 @@ class ProductManager:
             cursor.execute("SELECT * FROM products WHERE product_id = ? FOR UPDATE", (product_id,))
 
             if cursor.fetchone() is None:
-                raise ProducetNotFoundError("No product found with the provided ID. Cannot delete")
+                raise NotFoundError("No product found with the provided ID. Cannot delete")
 
             cursor.execute("DELETE FROM products WHERE product_id = ?", (product_id,))
 
             database.commit()
             return success_response("Deleted product successfully")
 
-        except ProducetNotFoundError as e:
+        except NotFoundError as e:
             return handle_not_found_error(str(e))
 
     @staticmethod
@@ -263,7 +282,7 @@ class ProductManager:
             product = cursor.fetchone()
 
             if not product:
-                raise ProducetNotFoundError("No product found with the provided ID. Cannot update stock")
+                raise NotFoundError("No product found with the provided ID. Cannot update stock")
 
             quantity = data.get('quantity', 0)
 
@@ -283,7 +302,7 @@ class ProductManager:
 
         except InvalidActionError as e:
             return handle_validation_error(str(e))
-        except ProducetNotFoundError as e:
+        except NotFoundError as e:
             return handle_not_found_error(str(e))
 
     @staticmethod
@@ -294,7 +313,7 @@ class ProductManager:
 
             product = cursor.fetchone()
             if product is None:
-                raise ProducetNotFoundError("No product found with the provided ID. Cannot buy")
+                raise NotFoundError("No product found with the provided ID. Cannot buy")
 
             current_stock = product['stock']
 
@@ -307,5 +326,50 @@ class ProductManager:
 
             return success_response("Bought product successfully")
 
-        except ProducetNotFoundError as e:
+        except NotFoundError as e:
             return handle_not_found_error(str(e))
+
+
+class UserManager:
+
+    @staticmethod
+    @database_transaction_helper
+    def login(username, password, cursor=None, database=None):
+        try:
+            #print(username, password)
+
+            if not all((username, password)):
+                raise KeyError("Missing required field")
+
+            cursor.execute("SELECT * FROM users WHERE username = ?", (username,))
+            #print(f"Cursor: {cursor}")
+            prospective_user = cursor.fetchone()
+            #print(f"P User: {prospective_user}")
+
+            if prospective_user is None:
+                raise NotFoundError("No user found with the provided credentials. Cannot login")
+
+            if not check_password(password, prospective_user['password']):
+                raise NotFoundError("No user found with the provided credentials. Cannot login")
+
+            user = prospective_user
+            #print(user)
+            return success_response("Logged in successfully"), user
+
+        except NotFoundError as e:
+            return handle_not_found_error(str(e)), None
+        except KeyError as e:
+            return handle_validation_error(str(e)), None
+
+    @staticmethod
+    @database_transaction_helper
+    def register(username, password, email, cursor=None, database=None):
+        try:
+            secure_password = hash_password(password)
+            cursor.execute("INSERT INTO users (username, password, email) VALUES (?, ?, ?)", (username, secure_password, email))
+            user = cursor.lastrowid
+            database.commit()
+            return success_response("Registered successfully"), user
+
+        except mariadb.IntegrityError as e:
+            return handle_validation_error("Username already exists"), None

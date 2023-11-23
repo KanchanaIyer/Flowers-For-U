@@ -3,36 +3,11 @@ from functools import wraps
 from flask import Blueprint, request
 
 from approot.models import Filter
-from approot.utils import handle_unauthorized, error_response, handle_json_error, ProductManager, success_response
-
-authorized_keys = ['1234', '5678', '9101']
-
-product_api = Blueprint('api', __name__, url_prefix='/api/products')
+from approot.utils import handle_unauthorized, error_response, handle_json_error, ProductManager, success_response, \
+    validate_key_
 
 
-def validate_key(key):
-    print(key)
-    if key in authorized_keys:
-        return True
-    else:
-        return False
-
-
-def validate_key_(func):
-    """
-    Decorator for validating the key cookie.
-    Endpoints with this decorator require the key cookie to be set to a valid key.
-    :param func:
-    :return:
-    """
-
-    @wraps(func)  # Without this, the flask is angry because the name of the function is changed
-    def wrapper(*args, **kwargs):
-        if not validate_key(request.cookies.get('key')):
-            return handle_unauthorized()
-        return func(*args, **kwargs)
-
-    return wrapper
+product_api = Blueprint('product_api', __name__, url_prefix='/api/products')
 
 
 @product_api.errorhandler(404)
@@ -206,10 +181,4 @@ def api_product_buy(product_id):
     return ProductManager.buy_product(product_id, data)
 
 
-@product_api.route('login/', methods=['POST'])
-def login():
-    data = request.get_json()
-    if data['key'] in authorized_keys:
-        return success_response("Logged in successfully", {'key': data['key']})
-    else:
-        return error_response("Invalid key", 401)
+

@@ -11,3 +11,11 @@ def home():
 @webpages.route('/flowers/', methods=['GET'])
 def flowers():
     return render_template('flowers.html')
+
+@webpages.route('/login/', methods=['GET'])
+def login():
+    return render_template('login.html')
+
+@webpages.route('/register/', methods=['GET'])
+def register():
+    return render_template('register.html')

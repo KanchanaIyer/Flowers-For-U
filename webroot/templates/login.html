@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flowers4U - Login</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/page_resources/common/ForFlowers-removebg.png') }}" />
+    <script>
+        const login_api_url = "{{ url_for('user_api.login') }}";
+        const login_url = "{{ url_for('webpages.login') }}";
+        const home_url = "{{ url_for('webpages.home') }}";
+    </script>
+    <script src="{{ url_for('static', filename='js/login/script.js') }}"></script>
+</head>
+<body>
+    <h1>Flowers4U - Login</h1>
+    <form id="login_form" action="{{ url_for('webpages.login') }}" method="post">
+        <label for="username">Username:</label>
+        <input type="text" name="username" id="username" required>
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required>
+        <input id="sub_btn" type="submit" value="Login">
+    </form>
+
+    <p>Don't have an account? <a href="{{ url_for('webpages.register') }}">Register</a></p>
+</body>
+</html>
