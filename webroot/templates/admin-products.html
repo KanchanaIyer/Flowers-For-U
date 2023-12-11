@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Product Management</title>
+</head>
+<body>
+
+<div id="productList">
+    <!-- Product list will be displayed here -->
+</div>
+
+<div id="addProductForm">
+    <!-- Form to add a new product -->
+    <h2>Add Product</h2>
+    <label for="productName">Name:</label>
+    <input type="text" id="productName" required>
+    <label for="productPrice">Price:</label>
+    <input type="number" id="productPrice" required>
+    <label for="productDescription">Description:</label>
+    <input type="text" id="productDescription" required>
+    <label for="productStock">Stock:</label>
+    <input type="number" id="productStock" required>
+    <label for="productImage">Image:</label>
+    <input type="file" id="productImage" required> <!-- This should be a jpg or png -->
+    <label for="productImageUrl">Image URL:</label>
+    <input type="url" id="productImageUrl" required> <!-- This should be a jpg or png -->
+    <button onclick="addProduct()">Add Product</button>
+</div>
+
+<script>
+    // Function to fetch products from the Flask API
+    function getProducts() {
+        /*
+        const filter = {
+        field: 'name',
+        rule: 'contains',
+        value: 'example',
+    };
+        let filters = JSON.stringify([JSON.stringify(filter), JSON.stringify(filter)]);
+        */
+        const filters = JSON.stringify([]);
+        const offset = 0;
+        const limit = 10;
+
+        const queryString = Object.entries({
+                filters: filters,
+                offset: offset,
+                limit: limit,
+            })
+            // Convert each key-value pair to a string separated by an '=' IE: ['filters', '[]'] becomes 'filters=[]'
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`) // Encode the key and value for each param
+            .join('&');
+
+            fetch(`/api/products/?${queryString}`, {
+                headers: {
+                    'Cookie': document.cookie
+                }
+            })
+            .then(response => response.json())
+            .then(data => displayProducts(data.data))
+            .catch(error => console.error('Error fetching products:', error));
+        }
+
+    // Function to add a new product using the Flask API
+    function addProduct() {
+        const productName = document.getElementById('productName').value;
+        const productPrice = document.getElementById('productPrice').value;
+        const productDescription = document.getElementById('productDescription').value;
+        const productStock = document.getElementById('productStock').value;
+        const productImageUrl = document.getElementById('productImageUrl').value;
+
+
+        let productData = {
+            name: productName,
+            price: productPrice,
+            description: productDescription,
+            stock: productStock,
+            image: productImageUrl
+        };
+
+        const json = JSON.stringify(productData);
+        const jsonBlob = new Blob([json], {
+            type: 'application/json'
+        });
+        const file = document.getElementById('productImage').files[0];
+        const formData = new FormData();
+        formData.append('product', json);
+        formData.append('image', file);
+
+        fetch('/api/products/', {
+            method: 'POST',
+            headers: {
+                //'Content-Type': 'application/json',
+                'Cookie': document.cookie
+            },
+            body: formData,
+
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Product added successfully, refresh the product list
+            getProducts();
+        })
+        .catch(error => console.error('Error adding product:', error));
+    }
+
+    // Function to display products in the webpage
+    function displayProducts(products) {
+        let productListHtml = '<h2>Product List</h2><ul>';
+
+        for (let i = 0; i < products.length; i++) {
+        const product = products[i];
+
+        // Displaying each field, excluding description
+        productListHtml += `
+            <li>
+                <strong>ID:</strong> ${product.product_id}<br>
+                <strong>Name:</strong> ${product.name}<br>
+                <strong>Price:</strong> $${product.price}<br>
+                <strong>Stock:</strong> ${product.stock}<br>
+                <strong>Location:</strong> <img src="${product.location}" alt="Product Image" style="max-width: 100px; max-height: 100px;"><br>
+            </li>
+        `;
+    }
+
+    productListHtml += '</ul>';
+    document.getElementById('productList').innerHTML = productListHtml;
+}
+
+
+    // Fetch products when the page loads
+    document.addEventListener('DOMContentLoaded', function () {
+        getProducts();
+    });
+</script>
+
+</body>
+</html>

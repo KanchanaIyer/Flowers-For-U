@@ -1,9 +1,9 @@
 from flask import session
-from crypto import generate_session_key, hash_key, check_key
+from approot.crypto.crypto import generate_session_key
 
 
 def create_session(user):
-    session['user'] = user
+    session['user_id'] = user
     session['key'] = generate_session_key()
     return session
 
@@ -15,6 +15,8 @@ def get_session():
 def delete_session():
     session.pop('user', None)
     session.pop('key', None)
+    session.pop('admin', None)
+    session.pop('user_id', None)
     return session
 
 

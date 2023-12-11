@@ -1,8 +1,10 @@
 import mariadb
 from mariadb import connect
 from mariadb import Error
-import config
+import approot.config.config
 import logging
+
+from approot.config import config
 
 logging.getLogger(__name__)
 

@@ -1,12 +1,10 @@
-from functools import wraps
-
-from flask import Flask, render_template, request, Blueprint
+from flask import Flask
 from flask_cors import CORS
-from config import get_flask_config
+from approot.config.config import get_flask_config
 
-from pages import webpages
-from product_api import product_api as p_api
-from user_api import user_api as u_api
+from approot.routes.pages import webpages
+from approot.routes.product_api import product_api as p_api
+from approot.routes.user_api import user_api as u_api
 
 flask_config = get_flask_config()
 app = Flask(__name__,

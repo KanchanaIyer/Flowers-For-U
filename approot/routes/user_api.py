@@ -1,7 +1,8 @@
 from flask import Blueprint, request
 
+from approot.data_managers.user_manager import UserManager
 from approot.sessions import create_session, delete_session, get_session
-from utils import handle_json_error, error_response, success_response, UserManager
+from approot.utils.utils import handle_json_error, error_response, success_response
 
 user_api = Blueprint('user_api', __name__, url_prefix='/api/user')
 
@@ -13,6 +14,7 @@ def login():
     :return:
     """
     data = request.get_json()
+
     (resp, status), user = UserManager.login(**data)
 
     if user and status == 200:  # Log in the user if login was successful
@@ -44,3 +46,16 @@ def register():
         create_session(user['user_id'])
         resp.set_cookie('key', get_session()['key'])
     return resp, status
+
+
+@user_api.route('status/', methods=['GET'])
+def status():
+    """
+    Endpoint for getting the status of the current user. By checking for user id in the session.
+    :return:
+    """
+    if get_session().get('user'):
+        return success_response("Logged in", {})
+    else:
+        return error_response("Not logged in", 401)
+    
