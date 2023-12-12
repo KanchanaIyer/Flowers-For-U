@@ -1,4 +1,5 @@
 import mariadb
+import logging
 
 from approot.database.database_manager import database_transaction_helper
 from approot.data_managers.errors import NotFoundError, InvalidActionError
@@ -30,7 +31,6 @@ class ProductManager:
                 create_filter_query(filters) if filters else '', limit, n_offset)
             cursor.execute(query)
             data = cursor.fetchall()
-            print(data)
 
             if not data or all(all(not x for x in obj.values()) for obj in data):
                 raise NotFoundError("No products found which match the provided filters or limit/offset")
@@ -53,6 +53,7 @@ class ProductManager:
         :return: Flask Response object containing the status of the request
         """
         try:
+            logging.debug(product_data)
             cursor.execute("INSERT INTO products (NAME, PRICE, DESCRIPTION, STOCK, LOCATION) VALUES (?, ?, ?, ?, ?)",
                            (product_data['name'], product_data['price'], product_data['description'],
                             product_data['stock'], product_data['location']))

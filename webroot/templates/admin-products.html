@@ -65,7 +65,7 @@
                     <input type="file" id="productImage" > <!-- This should be a jpg or png -->
                     <label for="productImageUrl">Image URL:</label>
                     <input type="url" id="productImageUrl" > <!-- This should be a jpg or png -->
-                    <button onclick="addProduct()">Add Product</button>
+                    <button type="submit">Add Product</button>
                 </form>
             </section>
 
@@ -131,18 +131,30 @@
                     .catch(error => console.error('Error fetching products:', error));
                 }
 
+            document.getElementById('addProductForm').addEventListener('submit', addProduct);
             // Function to add a new product using the Flask API
-            function addProduct() {
+            function addProduct(event) {
+                event.preventDefault()
+
                 const productName = document.getElementById('productName').value;
                 const productPrice = document.getElementById('productPrice').value;
                 const productDescription = document.getElementById('productDescription').value;
                 const productStock = document.getElementById('productStock').value;
-                const productImageUrl = document.getElementById('productImageUrl').value;
+                let productImageUrl = document.getElementById('productImageUrl').value;
 
+                // Fail if any required fields are empty
+                if (!productName || !productPrice || !productStock) {
+                    return;
+                }
+
+                if (!productImageUrl) {  // If no image URL is provided, set it to null so we dont send an empty string
+                    productImageUrl = null;
+                    return;
+                }
 
                 let productData = {
                     name: productName,
-                    price: productPrice,
+                    price: convertToCents(productPrice),
                     description: productDescription,
                     stock: productStock,
                     image: productImageUrl
@@ -157,6 +169,7 @@
                 formData.append('product', json);
                 formData.append('image', file);
 
+                console.log(document.cookie)
                 fetch('/api/products/', {
                     method: 'POST',
                     headers: {
@@ -185,7 +198,7 @@
 
                 const productData = {
                     name: form.modProductName.value,
-                    price: form.modProductPrice.value,
+                    price: convertToCents(form.modProductPrice.value),
                     description: form.modProductDescription.value,
                     stock: form.modProductStock.value
                 };
@@ -212,6 +225,13 @@
             }
 
 
+            function convertToCents(dollars) {
+                return dollars * 100;
+            }
+            function convertToDollars(cents) {
+                return cents / 100;
+            }
+
             // Function to display products in the webpage
             function displayProducts(products) {
                 let productListHtml = '<h2>Product List</h2><ul>';
@@ -224,7 +244,7 @@
                     <li>
                         <strong>ID:</strong> ${product.product_id}<br>
                         <strong>Name:</strong> ${product.name}<br>
-                        <strong>Price:</strong> $${product.price}<br>
+                        <strong>Price:</strong> $${convertToDollars(product.price)}<br>
                         <strong>Stock:</strong> ${product.stock}<br>
                         <strong>Location:</strong> <img src="${product.location}" alt="Product Image" style="max-width: 100px; max-height: 100px;"><br>
                         <button onclick="populateModificationForm(${product.product_id})">Modify</button>

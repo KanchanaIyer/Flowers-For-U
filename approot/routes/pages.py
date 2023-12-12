@@ -79,7 +79,7 @@ def login():
                 redirect_url = url_for('webpages.home')
 
             res = redirect(redirect_url)
-            res.set_cookie('key', get_session().get('key'), expires=3600)  #Key expires in an hour
+            res.set_cookie('key', get_session().get('key'), max_age=3600)  #Key expires in an hour
             return res
         else:
             return render_template('login.html', redirect_url=redirect_url, error="Invalid username or password!")

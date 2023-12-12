@@ -1,3 +1,4 @@
+import logging
 from functools import wraps
 
 import mariadb
@@ -51,15 +52,20 @@ def save_image_to_disk_by_url(url):
     :return: Path to the saved image
     """
     if url:
+        logging.debug(f"URL: {url}")
         response = requests.get(url)
         mimetype = response.headers.get('content-type')
-        if mimetype in ALLOWED_MIME_TYPES:
+        logging.debug(f"Mimetype: {mimetype}")
+        if mimetype.strip() in ALLOWED_MIME_TYPES:
+            logging.debug(f"Saving image to disk. Size: {len(response.content)} bytes")
             filename = secure_filename(generate_unique_filename(response.url.rsplit('/', 1)[1]))
             filepath = UPLOAD_FOLDER / filename
             with open(filepath, 'wb') as f:
+                logging.debug(f"Writing to file: {filepath}")
                 f.write(response.content)
 
             server_url = f"{SERVER_URL_ROOT}/{filename}"
+            logging.debug(f"Server URL: {server_url}")
             return server_url
         else:
             raise InvalidMimetypeError(f"Invalid mimetype: {mimetype}")
