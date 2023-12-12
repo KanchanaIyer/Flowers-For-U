@@ -1,3 +1,5 @@
+import logging
+
 import mariadb
 
 from approot.crypto.crypto import check_password, hash_password
@@ -90,18 +92,23 @@ class UserManager:
         """
         if not all((username, password, email)):
             raise KeyError("Missing required field")
+
         try:
             secure_password = hash_password(password)
             cursor.execute("INSERT INTO users (username, password, email) VALUES (?, ?, ?)",
                            (username, secure_password, email))
             last_id = cursor.lastrowid
             database.commit()
-            user = UserManager.get_user_by_id(last_id, cursor=cursor, database=database)
-            user['is_admin'] = False
+
+            user = {'user_id': last_id, 'username': username, 'email': email, 'is_admin': False}
 
             return User.from_dict(user)
 
         except mariadb.IntegrityError as e:
+            e.args = ("Username or email already exists",)
             raise e
         except KeyError as e:
+            raise e
+        except Exception as e:
+            logging.exception(e)
             raise e

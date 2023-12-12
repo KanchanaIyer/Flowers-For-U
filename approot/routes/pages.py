@@ -1,7 +1,9 @@
 from functools import wraps
 
+import mariadb
 from flask import Blueprint, render_template, request, url_for, redirect, session
 
+from approot.data_managers.errors import NotFoundError
 from approot.sessions import create_session, get_session, delete_session
 from approot.data_managers.user_manager import UserManager
 
@@ -62,7 +64,8 @@ def login():
         print(data)
         try:
             user = UserManager.login(**data)
-        except Exception as e:
+        except (KeyError, mariadb.Error, NotFoundError) as e:
+
             return render_template('login.html', redirect_url=redirect_url, error=str(e))
         print(user)
 
@@ -86,9 +89,35 @@ def login():
     return render_template('login.html', redirect_url=redirect_url)
 
 
-@webpages.route('/register/', methods=['GET'])
+@webpages.route('/register/', methods=['GET', 'POST'])
 def register():
-    return render_template('register.html')
+    redirect_url = request.args.get('redirect_url', url_for('webpages.home'))  # Default to homepage
+
+    if request.method == 'POST':
+        data = dict(request.form.items())
+
+        if not request.args.get('redirect_url') and data.get('redirect_url'):
+            redirect_url = data['redirect_url']
+
+        data.pop('redirect_url', None)
+
+        try:
+            # Assuming UserManager has a register method
+            user = UserManager.register(**data)
+        except (KeyError, mariadb.Error) as e:
+            return render_template('register.html', redirect_url=redirect_url, error=str(e))
+
+        if user:
+            create_session(user)
+            if not redirect_url.startswith(request.host_url):
+                redirect_url = url_for('webpages.home')
+
+            return redirect(redirect_url)
+
+        else:
+            return render_template('register.html', redirect_url=redirect_url, error="Registration failed!")
+
+    return render_template('register.html', redirect_url=redirect_url)
 
 
 @webpages.route('/logout/', methods=['GET'])

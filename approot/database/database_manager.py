@@ -1,3 +1,4 @@
+import logging
 from contextlib import contextmanager
 from functools import wraps
 
@@ -18,6 +19,10 @@ def get_database_connection():
     except mariadb.Error as e:
         yield None, None
         raise e
+    except Exception as e:
+        logging.error(f"Unknown error occurred: {e}")
+        yield None, None
+        raise e
 
 
 def database_transaction_helper(func):
@@ -31,6 +36,5 @@ def database_transaction_helper(func):
             except mariadb.Error as e:
                 database.rollback()
                 raise e
-
 
     return wrapper

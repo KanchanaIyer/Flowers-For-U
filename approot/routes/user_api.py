@@ -24,7 +24,7 @@ def login():
     session_key = get_session()['key']
 
     response, status_code = success_response("Successfully logged in", {'key': session_key})
-    response.set_cookie('key', session_key)
+    response.set_cookie('key', session_key, max_age=3600)
 
     return response, status_code
 
@@ -50,7 +50,7 @@ def register():
 
     create_session(user)
     resp, status_code = success_response("Successfully registered", {"key": get_session()['key']})
-    resp.set_cookie('key', get_session()['key'])
+    resp.set_cookie('key', get_session()['key'], max_age=3600)
     return resp, status_code
 
 

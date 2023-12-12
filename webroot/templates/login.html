@@ -7,7 +7,7 @@
     <script>
         const login_api_url = "{{ url_for('user_api.login') }}";
         const login_url = "{{ url_for('webpages.login') }}";
-        const home_url = "{{ url_for('webpages.home') }}";
+        let home_url = "{{ url_for('webpages.home') }}";
         const error = "{{ error }}";
     </script>
     <script src="{{ url_for('static', filename='js/login/script.js') }}"></script>
