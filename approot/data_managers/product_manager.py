@@ -17,7 +17,7 @@ class ProductManager:
     def get_all_products(filters=None, limit=10, offset=0, cursor=None, database=None):
         """
         Gets all products from the database based on the provided filters, limit and offset
-        :param list[dict] filters:
+        :param list[Filter] filters:
         :param int limit: Maximum number of results to return
         :param int offset: Offset to start the query at
         :param cursor:

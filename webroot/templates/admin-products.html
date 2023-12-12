@@ -43,11 +43,28 @@
         <main>
             <section id="filterSection">
                 <h2>Filters</h2>
-                <label for="filterInput">Product Filters:</label>
-                <input type="text" id="filterInput" placeholder="Enter filter">
-                <button onclick="applyFilter()">Apply Filter</button>
+                <div id="filterInputs">
+                    <select id="filterComparator">
+                        <option value="AND">AND</option>
+                        <option value="OR">OR</option>
+                    </select>
+                    <label for="negateFilter">Negate</label>
+                    <input type="checkbox" id="filterNegation">
+                    <select id="filterField" onchange="updateFilterRules()">
+                        <option value="name">Name</option>
+                        <option value="price">Price</option>
+                        <option value="stock">Stock</option>
+                    </select>
+                    <select id="filterRule">
+                        <!-- Add based on field selected -->
+                    </select>
+                    <input type="text" id="filterValue" placeholder="Enter value">
+                    <button onclick="addFilter()">Add Filter</button>
+                </div>
                 <div id="activeFilters"></div>
+                <button onclick="applyFilters()">Apply Filters</button>
             </section>
+
 
             <section id="addSection">
                 <h2>Add Product</h2>
@@ -101,6 +118,12 @@
             let currentOffset = 0;
             let currentLimit = 10;
             let currentFilters = [];
+            const FILTER_MAP = {
+                'name': ['contains'],
+                'price': ['equals', 'greater', 'less'],
+                'stock': ['equals', 'greater', 'less', 'exists'],
+            };
+
             // Function to fetch products from the Flask API
             function getProducts(filters = [], offset = 0, limit = 10) {
                 /*
@@ -226,10 +249,11 @@
 
 
             function convertToCents(dollars) {
-                return dollars * 100;
+                // Convert dollars to cents use string to avoid floating point errors
+                return Math.round(dollars * 100);
             }
             function convertToDollars(cents) {
-                return cents / 100;
+                return (cents / 100).toFixed(2);
             }
 
             // Function to display products in the webpage
@@ -281,12 +305,37 @@
 
             }
 
-            function applyFilter() {
-                const filterValue = document.getElementById('filterInput').value;
-                // Assuming filter is based on product name and contains rule
-                const filter = [{ field: "name", rule: "contains", value: filterValue }];
-                currentFilters = currentFilters.concat(filter);
+            function addFilter(){
+                const filterField = document.getElementById('filterField').value;
+                const filterRule = document.getElementById('filterRule').value;
+                const filterValue = document.getElementById('filterValue').value;
+                const  filterNegation = document.getElementById('filterNegation').checked;
+                const filterComparator = document.getElementById('filterComparator').value;
+                console.log(filterField, filterRule, filterValue);
+                console.log(currentFilters);
+
+                if (!filterValue) {
+                    return;
+                }
+
+                let filter;
+                if (filterField === 'price') {
+                    //Convert Prices to strings and then cents
+                    let FixedfilterValue = convertToCents(filterValue);
+                    filter = { field: filterField, rule: filterRule, value: FixedfilterValue,
+                    negate: filterNegation, comparator: filterComparator};
+                    console.log("Value Fixed to $", FixedfilterValue, "cents")
+                }
+                else {
+                    filter = { field: filterField, rule: filterRule, value: filterValue };
+                }
+
+                console.log(filter)
+                currentFilters.push(filter);
                 updateFilterDisplay();
+            }
+
+            function applyFilters() {
                 getProducts(currentFilters, currentOffset, currentLimit);
             }
 
@@ -294,6 +343,19 @@
                 currentFilters.splice(index, 1); // Remove the filter at the specified index
                 updateFilterDisplay(); // Update the filter display
                 getProducts(currentFilters, currentOffset, currentLimit); // Reload the product list with updated filters
+            }
+
+            function updateFilterRules() {
+                const filterField = document.getElementById('filterField').value;
+                const filterRuleSelect = document.getElementById('filterRule');
+                filterRuleSelect.innerHTML = ''; // Clear existing rules
+
+                FILTER_MAP[filterField].forEach(rule => {
+                    const ruleOption = document.createElement('option');
+                    ruleOption.value = rule;
+                    ruleOption.textContent = rule;
+                    filterRuleSelect.appendChild(ruleOption);
+                });
             }
 
 
@@ -304,7 +366,11 @@
 
                 currentFilters.forEach((filter, index) => {
                     const filterDiv = document.createElement('div');
-                    filterDiv.textContent = `${filter.field} ${filter.rule} ${filter.value}`;
+                    let filterValue = filter.value;
+                    if (filter.field === 'price') {
+                        filterValue = convertToDollars(filter.value);
+                    }
+                    filterDiv.textContent = `${filter.comparator} ${(filter.negate) ? 'NOT' : ''} ${filter.field} ${filter.rule} ${(filter.field === 'price') ? '$': ''}${filterValue}`;
                     const removeButton = document.createElement('button');
                     removeButton.textContent = 'Remove';
                     removeButton.onclick = function() { removeFilter(index); };
@@ -337,6 +403,7 @@
             // Fetch products when the page loads
             document.addEventListener('DOMContentLoaded', function () {
                 updateLoginStatus();
+                updateFilterRules();
                 updateFilterDisplay();
                 getProducts();
             });

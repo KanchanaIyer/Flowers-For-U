@@ -93,7 +93,7 @@ def save_image_to_disk_by_file(image):
         return None
 
 
-VALID_FILTERS = ['name', 'price']
+VALID_FILTERS = ['name', 'price', 'stock']
 VALID_FILTER_RULES = ['contains', 'equals', 'greater', 'less']
 FILTER_MAP = {
     'name': ['contains'],
@@ -147,17 +147,19 @@ def create_filter_query(filters: list[models.Filter]):
     query = ""
     for _filter in filters:
         if _filter:
+
             if _filter.field in FILTER_MAP.keys() and _filter.rule in FILTER_MAP[_filter.field]:
+
                 if _filter.rule == 'contains':
-                    query += f"AND {_filter.field} LIKE '%{_filter.value}%' "
+                    query += f"{_filter.comparator} {'NOT' if _filter.negate else ''} {_filter.field} LIKE '%{_filter.value}%' "
                 elif _filter.rule == 'equals':
-                    query += f"AND {_filter.field} = '{_filter.value}' "
+                    query += f"{_filter.comparator} {'NOT' if _filter.negate else ''} {_filter.field} = '{_filter.value}' "
                 elif _filter.rule == 'greater':
-                    query += f"AND {_filter.field} > '{_filter.value}' "
+                    query += f"{_filter.comparator} {'NOT' if _filter.negate else ''} {_filter.field} > '{_filter.value}' "
                 elif _filter.rule == 'less':
-                    query += f"AND {_filter.field} < '{_filter.value}' "
+                    query += f"{_filter.comparator} {'NOT' if _filter.negate else ''} {_filter.field} < '{_filter.value}' "
                 elif _filter.rule == 'exists':
-                    query += f"AND {_filter.field} > '{0}' "
+                    query += f"{_filter.comparator} {'NOT' if _filter.negate else ''} {_filter.field} > '{0}' "
             else:
                 raise InvalidActionError(f"Invalid filter: {str(_filter)} {FILTER_MAP.get(_filter.field, [])}")
     return query

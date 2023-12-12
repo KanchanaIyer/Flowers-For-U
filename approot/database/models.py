@@ -12,6 +12,14 @@ class Filter:
     field: str
     rule: str
     value: str
+    negate: bool = False
+    comparator: str = "AND"
+
+    valid_comparison_operators = ['AND', 'OR']
+
+    def __post_init__(self):
+        if self.comparator not in self.valid_comparison_operators:
+            raise ValueError(f"Invalid comparator: {self.comparator}. Must be one of {self.valid_comparison_operators}")
 
     def __str__(self):
         return f"{self.field} {self.rule} {self.value}"
@@ -26,7 +34,9 @@ class Filter:
         return {
             'field': self.field,
             'rule': self.rule,
-            'value': self.value
+            'value': self.value,
+            'negate': self.negate,
+            'comparator': self.comparator
         }
 
 
