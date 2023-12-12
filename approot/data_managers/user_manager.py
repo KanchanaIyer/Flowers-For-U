@@ -1,6 +1,9 @@
-from approot.crypto.crypto import check_password
+import mariadb
+
+from approot.crypto.crypto import check_password, hash_password
 from approot.database.database_manager import database_transaction_helper
 from approot.data_managers.errors import NotFoundError
+from approot.database.models import User
 from approot.utils.utils import success_response, handle_not_found_error
 
 
@@ -8,6 +11,25 @@ class UserManager:
     """
     This class contains static methods for managing user authentication and registration by accessing the database.
     """
+
+    @staticmethod
+    @database_transaction_helper
+    def get_user_by_id(user_id, cursor=None, database=None):
+        """
+        Gets a user from the database by their id
+        :param int user_id: Id of the user to get
+        :param cursor:
+        :param database:
+        :return: Flask Response object containing the status of the request and a dict representing the user (this may be changed to a user object in the future)
+        """
+        try:
+            cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+            user = cursor.fetchone()
+            if user is None:
+                raise NotFoundError("No user found with the provided id")
+            return User.from_dict(user)
+        except NotFoundError as e:
+            raise e
 
     @staticmethod
     @database_transaction_helper
@@ -47,12 +69,12 @@ class UserManager:
             else:
                 user['is_admin'] = False
 
-            return success_response("Logged in successfully"), user
+            return User.from_dict(user)
 
         except NotFoundError as e:
-            return handle_not_found_error(str(e)), None
+            raise e
         except KeyError as e:
-            return handle_validation_error(str(e)), None
+            raise e
 
     @staticmethod
     @database_transaction_helper
@@ -72,11 +94,14 @@ class UserManager:
             secure_password = hash_password(password)
             cursor.execute("INSERT INTO users (username, password, email) VALUES (?, ?, ?)",
                            (username, secure_password, email))
-            user = cursor.lastrowid
+            last_id = cursor.lastrowid
             database.commit()
-            return success_response("Registered successfully"), user
+            user = UserManager.get_user_by_id(last_id, cursor=cursor, database=database)
+            user['is_admin'] = False
+
+            return User.from_dict(user)
 
         except mariadb.IntegrityError as e:
-            return handle_validation_error("Username already exists"), None
+            raise e
         except KeyError as e:
-            return handle_validation_error(str(e)), None
+            raise e

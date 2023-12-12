@@ -1,6 +1,9 @@
+import logging
+
 from flask import Flask
 from flask_cors import CORS
 from approot.config.config import get_flask_config
+from approot.database.database import init_app
 
 from approot.routes.pages import webpages
 from approot.routes.product_api import product_api as p_api
@@ -12,10 +15,14 @@ app = Flask(__name__,
             static_folder='../webroot/static',
             template_folder='../webroot/templates')
 app.config['SECRET_KEY'] = flask_config['secretKey']
+app.permanent_session_lifetime = int(flask_config['sessionLifetime'])
+logging.basicConfig(level=logging.DEBUG)
+app.logger.setLevel(logging.DEBUG)
 
 app.register_blueprint(webpages)
 app.register_blueprint(p_api)
 app.register_blueprint(u_api)
+init_app(app)
 
 CORS(app, supports_credentials=True)  # Allow cross-origin requests
 if __name__ == '__main__':

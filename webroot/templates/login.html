@@ -21,11 +21,12 @@
         <label for="password">Password:</label>
         <input type="password" name="password" id="password" required>
         <input id="sub_btn" type="submit" value="Login">
+        <input type="hidden" name="redirect_url" value="{{ redirect_url }}"> <!-- Hidden input to store the redirect url from server -->
+
     </form>
     <p id="error_msg">{{ error }}</p>
 
     <p>Don't have an account? <a href="{{ url_for('webpages.register') }}">Register</a></p>
-    <input type="hidden" name="redirect_url" value="{{ redirect_url }}"> <!-- Hidden input to store the redirect url from server -->
 
 </body>
 

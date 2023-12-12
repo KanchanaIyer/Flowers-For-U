@@ -121,6 +121,7 @@ def validate_key_(func):
         user_key = request.cookies.get('key')
         session = get_session()
         print(str(session))
+        print(user_key)
         session_key = get_session().get('key')
         if not user_key or (user_key != session_key):
             return handle_unauthorized()

@@ -5,16 +5,20 @@ import approot.config.config
 import logging
 
 from approot.config import config
+from flask import g
 
 logging.getLogger(__name__)
 
-connection: mariadb.Connection | None = None
+# Global variable for the connection pool
+pool: mariadb.ConnectionPool = None  # type: ignore
 
 
-def connect_to_database(debug=False):
-    global connection
+def init_connection_pool(debug=False):
+    global pool
     database_config = config.get_database_config()
-    connection = connect(
+    pool = mariadb.ConnectionPool(
+        pool_name="FlowerPool",
+        pool_size=int(database_config['poolSize']),
         host=database_config['host'],
         user=database_config['user'],
         password=database_config['password'],
@@ -30,16 +34,31 @@ def connect_to_database(debug=False):
         ssl_verify_cert=debug,
         # ssl=database_config['ssl'] == 'ENABLED',
     )
-    connection.auto_reconnect = database_config['reconnect'] == 'ENABLED'
-    if connection is None:
-        logging.error("Failed to connect to database")
-        raise Error("Failed to connect to database")
+    pool.auto_reconnect = database_config['reconnect'] == 'ENABLED'
+
+
+def get_db_connection(debug=False):
+    if not pool:
+        init_connection_pool(debug)
+
+    if not g.get('db_connection'):
+        g.db_connection = pool.get_connection()
+    return g.db_connection
 
 
 def get_cursor(debug=False):
-    global connection
-
-    if connection is None:
-        connect_to_database(debug)
+    connection = get_db_connection(debug)
     cursor = connection.cursor(dictionary=True)
     return connection, cursor
+
+
+def close_connection(error=None):
+    logging.debug("Closing database connection")
+    logging.error(error)
+    db = g.pop('db_connection', None)
+    if db is not None:
+        db.close()
+
+
+def init_app(app):
+    app.teardown_appcontext(close_connection)

@@ -1,139 +1,328 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Product Management</title>
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8">
+        <title>Product Management</title>
+    </head>
+    <body>
 
-<div id="productList">
-    <!-- Product list will be displayed here -->
-</div>
+        <header>
+            <h1>Product Management</h1>
+            <div>
+                <span>
+                    <a href="{{ url_for('webpages.home') }}">Home</a>
+                    <a href="{{ url_for('webpages.admin_products') }}">Product Management</a>
+                    <a href="/">Order Management</a>
+                    <a href="/">User Management</a>
+                    <a href="{{ url_for('webpages.login') }}">Login</a>
+                    <a href="{{ url_for('webpages.logout') }}">Logout</a>
+                </span>
+            </div>
+            <div>
+                <span id="loginStatusContainer">
+                    <!-- Login status will be displayed here -->
+                </span>
+            </div>
 
-<div id="addProductForm">
-    <!-- Form to add a new product -->
-    <h2>Add Product</h2>
-    <label for="productName">Name:</label>
-    <input type="text" id="productName" required>
-    <label for="productPrice">Price:</label>
-    <input type="number" id="productPrice" required>
-    <label for="productDescription">Description:</label>
-    <input type="text" id="productDescription" required>
-    <label for="productStock">Stock:</label>
-    <input type="number" id="productStock" required>
-    <label for="productImage">Image:</label>
-    <input type="file" id="productImage" required> <!-- This should be a jpg or png -->
-    <label for="productImageUrl">Image URL:</label>
-    <input type="url" id="productImageUrl" required> <!-- This should be a jpg or png -->
-    <button onclick="addProduct()">Add Product</button>
-</div>
+            <div>
+                <span>
+                    <button onclick="document.getElementById('addSection').style.display = 'block';">Add Product</button>
+                    <button onclick="document.getElementById('addSection').style.display = 'none';">Hide Form</button>
+                </span>
+            </div>
 
-<script>
-    // Function to fetch products from the Flask API
-    function getProducts() {
-        /*
-        const filter = {
-        field: 'name',
-        rule: 'contains',
-        value: 'example',
-    };
-        let filters = JSON.stringify([JSON.stringify(filter), JSON.stringify(filter)]);
-        */
-        const filters = JSON.stringify([]);
-        const offset = 0;
-        const limit = 10;
+            <div>
+                <span>
+                    <button onclick="document.getElementById('modifySections').style.display = 'block';">Modify Product</button>
+                    <button onclick="document.getElementById('modifySections').style.display = 'none';">Hide Form</button>
+                </span>
+            </div>
 
-        const queryString = Object.entries({
-                filters: filters,
-                offset: offset,
-                limit: limit,
-            })
-            // Convert each key-value pair to a string separated by an '=' IE: ['filters', '[]'] becomes 'filters=[]'
-            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`) // Encode the key and value for each param
-            .join('&');
+        </header>
 
-            fetch(`/api/products/?${queryString}`, {
-                headers: {
-                    'Cookie': document.cookie
+        <main>
+            <section id="filterSection">
+                <h2>Filters</h2>
+                <label for="filterInput">Product Filters:</label>
+                <input type="text" id="filterInput" placeholder="Enter filter">
+                <button onclick="applyFilter()">Apply Filter</button>
+                <div id="activeFilters"></div>
+            </section>
+
+            <section id="addSection">
+                <h2>Add Product</h2>
+                <form id="addProductForm">
+                    <!-- Form to add a new product -->
+                    <label for="productName">Name:</label>
+                    <input type="text" id="productName" required>
+                    <label for="productPrice">Price:</label>
+                    <input type="number" id="productPrice" step="0.01" required>
+                    <label for="productDescription">Description:</label>
+                    <input type="text" id="productDescription">
+                    <label for="productStock">Stock:</label>
+                    <input type="number" id="productStock" required>
+                    <label for="productImage">Image:</label>
+                    <input type="file" id="productImage" > <!-- This should be a jpg or png -->
+                    <label for="productImageUrl">Image URL:</label>
+                    <input type="url" id="productImageUrl" > <!-- This should be a jpg or png -->
+                    <button onclick="addProduct()">Add Product</button>
+                </form>
+            </section>
+
+            <section id="modifySections">
+                <h2>Modify Product</h2>
+                <form id="modifyProductForm" enctype="multipart/form-data">
+                    <input type="hidden" id="modProductId" name="productId">
+                    <input type="text" id="modProductName" name="name" placeholder="Product Name">
+                    <input type="number" id="modProductPrice" name="price" placeholder="Price" step="0.01">
+                    <input type="text" id="modProductDescription" name="description" placeholder="Description">
+                    <input type="number" id="modProductStock" name="stock" placeholder="Stock">
+                    <input type="file" id="modProductImage" name="image">
+                    <button type="submit">Modify Product</button>
+                </form>
+            </section>
+
+            <section id="productSection">
+                <div id="productList">
+                    <!-- Product list will be displayed here -->
+                </div>
+                <div>
+                    <button onclick="changeOffset(-1)">Previous</button>
+                    <button onclick="changeOffset(1)">Next</button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&COPY; 2023 FLOWERS4U</p>
+        </footer>
+
+        <script>
+            let currentOffset = 0;
+            let currentLimit = 10;
+            let currentFilters = [];
+            // Function to fetch products from the Flask API
+            function getProducts(filters = [], offset = 0, limit = 10) {
+                /*
+                const filter = {
+                field: 'name',
+                rule: 'contains',
+                value: 'example',
+            };
+                let filters = JSON.stringify([JSON.stringify(filter), JSON.stringify(filter)]);
+                */
+
+                const queryString = Object.entries({
+                        filters: JSON.stringify(filters),
+                        offset: JSON.stringify(offset),
+                        limit: JSON.stringify(limit),
+                    })
+                    // Convert each key-value pair to a string separated by an '=' IE: ['filters', '[]'] becomes 'filters=[]'
+                    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`) // Encode the key and value for each param
+                    .join('&');
+
+                    fetch(`/api/products/?${queryString}`, {
+                        headers: {
+                            'Cookie': document.cookie
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => displayProducts(data.data))
+                    .catch(error => console.error('Error fetching products:', error));
                 }
-            })
-            .then(response => response.json())
-            .then(data => displayProducts(data.data))
-            .catch(error => console.error('Error fetching products:', error));
-        }
 
-    // Function to add a new product using the Flask API
-    function addProduct() {
-        const productName = document.getElementById('productName').value;
-        const productPrice = document.getElementById('productPrice').value;
-        const productDescription = document.getElementById('productDescription').value;
-        const productStock = document.getElementById('productStock').value;
-        const productImageUrl = document.getElementById('productImageUrl').value;
+            // Function to add a new product using the Flask API
+            function addProduct() {
+                const productName = document.getElementById('productName').value;
+                const productPrice = document.getElementById('productPrice').value;
+                const productDescription = document.getElementById('productDescription').value;
+                const productStock = document.getElementById('productStock').value;
+                const productImageUrl = document.getElementById('productImageUrl').value;
 
 
-        let productData = {
-            name: productName,
-            price: productPrice,
-            description: productDescription,
-            stock: productStock,
-            image: productImageUrl
-        };
+                let productData = {
+                    name: productName,
+                    price: productPrice,
+                    description: productDescription,
+                    stock: productStock,
+                    image: productImageUrl
+                };
 
-        const json = JSON.stringify(productData);
-        const jsonBlob = new Blob([json], {
-            type: 'application/json'
-        });
-        const file = document.getElementById('productImage').files[0];
-        const formData = new FormData();
-        formData.append('product', json);
-        formData.append('image', file);
+                const json = JSON.stringify(productData);
+                const jsonBlob = new Blob([json], {
+                    type: 'application/json'
+                });
+                const file = document.getElementById('productImage').files[0];
+                const formData = new FormData();
+                formData.append('product', json);
+                formData.append('image', file);
 
-        fetch('/api/products/', {
-            method: 'POST',
-            headers: {
-                //'Content-Type': 'application/json',
-                'Cookie': document.cookie
-            },
-            body: formData,
+                fetch('/api/products/', {
+                    method: 'POST',
+                    headers: {
+                        //'Content-Type': 'application/json',
+                        'Cookie': document.cookie
+                    },
+                    body: formData,
 
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Product added successfully, refresh the product list
-            getProducts();
-        })
-        .catch(error => console.error('Error adding product:', error));
-    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Product added successfully, refresh the product list
+                    getProducts(currentFilters, currentOffset, currentLimit);
+                })
+                .catch(error => console.error('Error adding product:', error));
+            }
 
-    // Function to display products in the webpage
-    function displayProducts(products) {
-        let productListHtml = '<h2>Product List</h2><ul>';
+            document.getElementById('modifyProductForm').addEventListener('submit', modifyProduct);
 
-        for (let i = 0; i < products.length; i++) {
-        const product = products[i];
+            async function modifyProduct(event) {
+                event.preventDefault();
 
-        // Displaying each field, excluding description
-        productListHtml += `
-            <li>
-                <strong>ID:</strong> ${product.product_id}<br>
-                <strong>Name:</strong> ${product.name}<br>
-                <strong>Price:</strong> $${product.price}<br>
-                <strong>Stock:</strong> ${product.stock}<br>
-                <strong>Location:</strong> <img src="${product.location}" alt="Product Image" style="max-width: 100px; max-height: 100px;"><br>
-            </li>
-        `;
-    }
+                const formData = new FormData();
+                const form = event.target;
+                const productId = form.modProductId.value;
 
-    productListHtml += '</ul>';
-    document.getElementById('productList').innerHTML = productListHtml;
-}
+                const productData = {
+                    name: form.modProductName.value,
+                    price: form.modProductPrice.value,
+                    description: form.modProductDescription.value,
+                    stock: form.modProductStock.value
+                };
+                formData.append('product', JSON.stringify(productData));
 
 
-    // Fetch products when the page loads
-    document.addEventListener('DOMContentLoaded', function () {
-        getProducts();
-    });
-</script>
+                try {
+                    const response = await fetch(`/api/products/${productId}/`, {
+                        method: 'PUT',
+                        body: formData,
+                    });
 
-</body>
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        alert('Product updated successfully');
+                        getProducts(currentFilters, currentOffset, currentLimit);
+                    } else {
+                        // Handle errors
+                        alert('Error updating product');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+
+
+            // Function to display products in the webpage
+            function displayProducts(products) {
+                let productListHtml = '<h2>Product List</h2><ul>';
+
+                for (let i = 0; i < products.length; i++) {
+                const product = products[i];
+
+                // Displaying each field, excluding description
+                productListHtml += `
+                    <li>
+                        <strong>ID:</strong> ${product.product_id}<br>
+                        <strong>Name:</strong> ${product.name}<br>
+                        <strong>Price:</strong> $${product.price}<br>
+                        <strong>Stock:</strong> ${product.stock}<br>
+                        <strong>Location:</strong> <img src="${product.location}" alt="Product Image" style="max-width: 100px; max-height: 100px;"><br>
+                        <button onclick="populateModificationForm(${product.product_id})">Modify</button>
+                    </li>
+                    `;
+                }
+
+                productListHtml += '</ul>';
+                document.getElementById('productList').innerHTML = productListHtml;
+            }
+
+            async function populateModificationForm(productId) {
+                try {
+                    const response = await fetch(`/api/products/${productId}/`);
+                    let product = await response.json();
+                    product = product.data[0]
+                    alert(JSON.stringify(product));
+                    if (product) {
+                        document.getElementById('modProductId').value = product.product_id;
+                        document.getElementById('modProductName').value = product.name;
+                        document.getElementById('modProductPrice').value = product.price;
+                        document.getElementById('modProductDescription').value = product.description;
+                        document.getElementById('modProductStock').value = product.stock;
+                        // Reset or update the image file input if necessary
+                    }
+                } catch (error) {
+                    console.error('Error fetching product:', error);
+                }
+            }
+
+            function changeOffset(direction) {
+                    currentOffset = currentOffset + direction;
+                    getProducts(currentFilters, currentOffset, currentLimit);
+
+            }
+
+            function applyFilter() {
+                const filterValue = document.getElementById('filterInput').value;
+                // Assuming filter is based on product name and contains rule
+                const filter = [{ field: "name", rule: "contains", value: filterValue }];
+                currentFilters = currentFilters.concat(filter);
+                updateFilterDisplay();
+                getProducts(currentFilters, currentOffset, currentLimit);
+            }
+
+            function removeFilter(index) {
+                currentFilters.splice(index, 1); // Remove the filter at the specified index
+                updateFilterDisplay(); // Update the filter display
+                getProducts(currentFilters, currentOffset, currentLimit); // Reload the product list with updated filters
+            }
+
+
+
+            function updateFilterDisplay() {
+                const filterContainer = document.getElementById('activeFilters');
+                filterContainer.innerHTML = ''; // Clear existing filters
+
+                currentFilters.forEach((filter, index) => {
+                    const filterDiv = document.createElement('div');
+                    filterDiv.textContent = `${filter.field} ${filter.rule} ${filter.value}`;
+                    const removeButton = document.createElement('button');
+                    removeButton.textContent = 'Remove';
+                    removeButton.onclick = function() { removeFilter(index); };
+                    filterDiv.appendChild(removeButton);
+                    filterContainer.appendChild(filterDiv);
+                });
+            }
+
+            async function updateLoginStatus() {
+                fetch('/api/user/info/', {
+                    headers: {
+                        'Cookie': document.cookie
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.data) {
+                        // User is logged in
+                        document.getElementById('loginStatusContainer').innerHTML = `Logged in as ${data.data.username}`;
+                    } else {
+                        // User is not logged in
+                        document.getElementById('loginStatusContainer').innerHTML = 'Not logged in';
+                    }
+                })// Returns 401 if not logged in
+                .catch(error => console.error('Error fetching user info:', error));
+            }
+
+
+
+            // Fetch products when the page loads
+            document.addEventListener('DOMContentLoaded', function () {
+                updateLoginStatus();
+                updateFilterDisplay();
+                getProducts();
+            });
+
+        </script>
+
+    </body>
+
 </html>

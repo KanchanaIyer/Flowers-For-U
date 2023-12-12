@@ -1,10 +1,18 @@
 from flask import session
 from approot.crypto.crypto import generate_session_key
+from approot.database.models import User
 
 
-def create_session(user):
-    session['user_id'] = user
+def create_session(user: User):
+    session['user_id'] = user.user_id
     session['key'] = generate_session_key()
+    session['user'] = user.username
+    session['admin'] = user.is_admin
+
+    # Set session expiration
+    session.permanent = True
+    session.modified = True
+    session.permanent_session_lifetime = 3600  # 1 hour
     return session
 
 

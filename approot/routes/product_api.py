@@ -45,7 +45,6 @@ def api_test():
 
 
 @product_api.route('/', methods=['GET'])
-@validate_key_
 @handle_error_flask
 def get_products():
     """
@@ -83,17 +82,29 @@ def get_products():
     """
 
     # Extracting query parameters from the URL
+    """
+    return success_response("Testing for errors", [
+            {
+                "id": 1,
+                "name": "Example Product 1",
+                "price": 19.99,
+                "description": "Lorem ipsum...",
+                "stock": 50,
+                "location": "/images/example1.jpg"
+            }])
+    """
     filters = request.args.get('filters')
-    print(filters)
-    filters = [Filter.from_dict(json.loads(_filter)) for _filter in json.loads(filters)]
-    print(filters)
+    #print(filters)
+    filters = [Filter.from_dict(_filter) for _filter in json.loads(filters)]
+    #print(filters)
     limit = request.args.get('limit', default=10, type=int)
     offset = request.args.get('offset', default=0, type=int)
-    print(limit, offset)
+    #print(limit, offset)
 
     res = ProductManager.get_all_products(filters=filters,
                                                limit=limit,
                                                offset=offset)
+    print(res)
     return success_response("Retrieved products successfully", res)
 
 
@@ -140,7 +151,6 @@ def add_product():
 
 
 @product_api.route('<int:product_id>/', methods=['GET'])
-@validate_key_
 def get_product(product_id: int):
     """
     Endpoint for getting a specific product
@@ -203,8 +213,9 @@ def modify_product(product_id):
     }
     :return:
     """
-
-    data = request.get_json()
+    print(request.form)
+    print(request.mimetype)
+    data = json.loads(request.form.get('product'))
     location = parse_image(data)
     data['location'] = location
 
