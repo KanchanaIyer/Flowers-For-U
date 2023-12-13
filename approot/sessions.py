@@ -4,6 +4,11 @@ from approot.database.models import User
 
 
 def create_session(user: User):
+    """
+    Creates a session for the user, if a session already exists it will be overwritten
+    :param user:
+    :return:
+    """
     session['user_id'] = user.user_id
     session['key'] = generate_session_key()
     session['user'] = user.username
@@ -17,10 +22,18 @@ def create_session(user: User):
 
 
 def get_session():
+    """
+    Gets the current session to avoid having to import flask.session everywhere
+    :return:
+    """
     return session
 
 
 def delete_session():
+    """
+    Deletes the current session
+    :return:
+    """
     session.pop('user', None)
     session.pop('key', None)
     session.pop('admin', None)

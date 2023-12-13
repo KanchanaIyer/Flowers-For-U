@@ -1,4 +1,5 @@
 import json
+import logging
 from functools import wraps
 
 import mariadb
@@ -9,13 +10,18 @@ from approot.data_managers.product_manager import ProductManager
 from approot.database.models import Filter
 from approot.utils.utils import handle_unauthorized, error_response, handle_json_error, success_response, \
     validate_key_, save_image_to_disk_by_file, save_image_to_disk_by_url, InvalidMimetypeError, handle_not_found_error, \
-    handle_database_error, handle_validation_error, handle_error_flask
+    handle_database_error, handle_validation_error, handle_error_flask, remove_image_from_disk
 
 product_api = Blueprint('product_api', __name__, url_prefix='/api/products')
 
 
-def parse_image(data):
-    if 'image' in request.files:  # Check if image is in files
+def parse_image(data: dict) -> str | None:
+    """
+    Parses the image from the request and saves it to disk.
+    :param data:
+    :return:
+    """
+    if 'image' in request.files:  # Check if the image is in files
         image = request.files['image']
         location = save_image_to_disk_by_file(image)
         return location
@@ -58,11 +64,13 @@ def get_products():
         - field (str): The field to filter by. Must be one of the following: name, price.
         - rule (str): The rule to apply to the filter. Must be one of the following: contains, equals, greater, less.
         - value (str): The value to filter by.
+        - negate (boolean): Whether to negate the filter. Default is false.
+        - comparator (str): The comparator to use for the filter. Must be one of the following: AND, OR. Default is AND.
     - limit (optional): The maximum number of results to return. Default is 10.
     - offset (optional): The offset to start the query at. Default is 0.
 
     Request:
-    GET /api/products/?filters=[{"field": "name", "rule": "contains", "value": "Example"}]&limit=10&offset=0
+    GET /api/products/?filters=[{"field": "name", "rule": "contains", "value": "Example", "negate": false, "comparator": "AND"}]&limit=10&offset=0
 
     Response:
     {
@@ -101,11 +109,15 @@ def get_products():
     offset = request.args.get('offset', default=0, type=int)
     #print(limit, offset)
 
-    res = ProductManager.get_all_products(filters=filters,
+    products = ProductManager.get_all_products(filters=filters,
                                                limit=limit,
                                                offset=offset)
-    print(res)
-    return success_response("Retrieved products successfully", res)
+    logging.critical(products)
+    logging.critical("TESTING")
+    test_dump = json.dumps([product.to_dict() for product in products], separators=(',', ':'))
+    logging.critical(test_dump)
+    return success_response("Retrieved products successfully",
+                            json.dumps([product.to_dict() for product in products], separators=(',', ':')))
 
 
 @product_api.route('/', methods=['POST'])
@@ -178,7 +190,7 @@ def get_product(product_id: int):
     :return:
     """
     res = ProductManager.get_product_by_id(product_id)
-    return success_response("Retrieved product successfully", res)
+    return success_response("Retrieved product successfully", res.to_dict())
 
 
 @product_api.route('<int:product_id>/', methods=['PUT'])
@@ -213,8 +225,6 @@ def modify_product(product_id):
     }
     :return:
     """
-    print(request.form)
-    print(request.mimetype)
     data = json.loads(request.form.get('product'))
     location = parse_image(data)
     data['location'] = location
@@ -233,9 +243,21 @@ def remove_product(product_id):
     This endpoint requires the key Cookie to be set to a valid key.
     For standardization, the Content-Type header should be set to application/json.
     :param product_id: The ID of the product to remove.
-    :return:
+
+    Request:
+    DELETE /api/products/1/
+
+    Response:
+    {
+        "status": "success",
+        "message": "Deleted product successfully",
+        "data": {}
+    }
+    :return: A JSON object containing the status of the request.
     """
+    product = ProductManager.get_product_by_id(product_id)
     res = ProductManager.delete_product(product_id)
+    remove_image_from_disk(product.location)
     return success_response("Deleted product successfully", res)
 
 
@@ -250,6 +272,26 @@ def update_product_stock(product_id):
     The body must be a JSON object containing the following:
         quantity - The quantity to add or subtract from the current stock.
         action - Either "add" or "subtract" to indicate whether to add or subtract from the stock.
+
+    :param product_id: The ID of the product to update the stock of.
+
+    Request:
+
+    POST /api/products/1/update-stock/
+    Content-Type: application/json
+    {
+        "quantity": 10,
+        "action": "add"
+    }
+
+    Response:
+
+    {
+        "status": "success",
+        "message": "Updated product stock successfully",
+        "data": {}
+    }
+
     :return: A JSON object indicating the status of the stock update.
     """
 
@@ -270,6 +312,23 @@ def api_product_buy(product_id):
     The Content-Type header must be set to application/json.
     The body must be a JSON object containing the following:
         quantity - The quantity of the product to buy.
+
+    :param product_id: The ID of the product to buy.
+
+    Request:
+
+    POST /api/products/buy/1/
+    Content-Type: application/json
+    {
+        "quantity": 10
+    }
+
+    Response:
+        {
+            "status": "success",
+            "message": "Bought product successfully",
+            "data": {}
+        }
     :return: A JSON object indicating the status of the purchase.
     """
     # Check if https

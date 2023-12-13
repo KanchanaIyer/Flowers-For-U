@@ -14,6 +14,11 @@ pool: mariadb.ConnectionPool = None  # type: ignore
 
 
 def init_connection_pool(debug=False):
+    """
+    Initializes the connection pool
+    :param debug:
+    :return:
+    """
     global pool
     database_config = config.get_database_config()
     pool = mariadb.ConnectionPool(
@@ -37,7 +42,12 @@ def init_connection_pool(debug=False):
     pool.auto_reconnect = database_config['reconnect'] == 'ENABLED'
 
 
-def get_db_connection(debug=False):
+def get_db_connection(debug=False) -> mariadb.Connection:
+    """
+    Gets a connection from the connection pool
+    :param debug:
+    :return:
+    """
     if not pool:
         init_connection_pool(debug)
 
@@ -46,13 +56,23 @@ def get_db_connection(debug=False):
     return g.db_connection
 
 
-def get_cursor(debug=False):
+def get_cursor(debug=False) -> (mariadb.Connection, mariadb.Cursor):
+    """
+    Gets a cursor and connection from the connection pool
+    :param debug:
+    :return:
+    """
     connection = get_db_connection(debug)
     cursor = connection.cursor(dictionary=True)
     return connection, cursor
 
 
 def close_connection(error=None):
+    """
+    Closes the database connection
+    :param error:
+    :return:
+    """
     logging.debug("Closing database connection")
     logging.error(error)
     db = g.pop('db_connection', None)
@@ -61,4 +81,9 @@ def close_connection(error=None):
 
 
 def init_app(app):
-    app.teardown_appcontext(close_connection)
+    """
+    Database Specific Flask initialization
+    :param app:
+    :return:
+    """
+    app.teardown_appcontext(close_connection) # Close connection after request is finished

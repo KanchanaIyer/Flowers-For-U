@@ -15,9 +15,9 @@ app = Flask(__name__,
             static_folder='../webroot/static',
             template_folder='../webroot/templates')
 app.config['SECRET_KEY'] = flask_config['secretKey']
+app.config['max_content_length'] = int(flask_config['maxContentLength'])
 app.permanent_session_lifetime = int(flask_config['sessionLifetime'])
-logging.basicConfig(level=logging.DEBUG)
-app.logger.setLevel(logging.DEBUG)
+
 
 app.register_blueprint(webpages)
 app.register_blueprint(p_api)
@@ -26,4 +26,6 @@ init_app(app)
 
 CORS(app, supports_credentials=True)  # Allow cross-origin requests
 if __name__ == '__main__':
+    # This is all testing configuration. This is not used in production.
+    logging.basicConfig(level=logging.DEBUG)
     app.run(debug=flask_config['debug'] == "ENABLED", host=flask_config['host'], port=flask_config['port'])

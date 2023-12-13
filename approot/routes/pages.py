@@ -1,3 +1,4 @@
+import logging
 from functools import wraps
 
 import mariadb
@@ -11,6 +12,12 @@ webpages = Blueprint('webpages', __name__, template_folder='../webroot/templates
 
 
 def reguire_login(f):
+    """
+    Decorator for requiring login to access a page
+    The user will be redirected to the login page if they are not logged in then redirected back to the page they were trying to access
+    :param f:
+    :return:
+    """
     @wraps(f)
     def func(*args, **kwargs):
         print(f"Sesssion: {session}")
@@ -27,6 +34,12 @@ def reguire_login(f):
 
 
 def check_admin(f):
+    """
+    Decorator for checking if the user is an admin
+    The user will be redirected to the 401 page if they are not an admin
+    :param f:
+    :return:
+    """
     @wraps(f)
     def func(*args, **kwargs):
         print(f"Sesssion: {session}")
@@ -61,23 +74,20 @@ def login():
             redirect_url = data['redirect_url']
 
         data.pop('redirect_url')
-        print(data)
         try:
             user = UserManager.login(**data)
         except (KeyError, mariadb.Error, NotFoundError) as e:
 
             return render_template('login.html', redirect_url=redirect_url, error=str(e))
-        print(user)
 
         if user:  # Create a session for the user since it exists
             create_session(user)
 
             # Redirect to the desired page after a successful login
-            print("Redirecting to: {}".format(redirect_url))
-            print("Session: {}".format(session))
+            logging.info(f"Redirecting to {redirect_url}")
 
             # Verify the redirect url is valid and points to the same domain to prevent redirecting to any site
-            # I can add some explicit exceptions if needed
+            # I can add some explicit exceptions to this if needed
             if not redirect_url.startswith(request.host_url):
                 redirect_url = url_for('webpages.home')
 
@@ -102,7 +112,6 @@ def register():
         data.pop('redirect_url', None)
 
         try:
-            # Assuming UserManager has a register method
             user = UserManager.register(**data)
         except (KeyError, mariadb.Error) as e:
             return render_template('register.html', redirect_url=redirect_url, error=str(e))
@@ -130,8 +139,6 @@ def logout():
 @reguire_login
 @check_admin
 def admin():
-    # Check is user is logged in
-    print(session)
     return render_template('admin.html')
 
 
@@ -139,7 +146,4 @@ def admin():
 @reguire_login
 @check_admin
 def admin_products():
-    # Check is user is logged in
-    print(session)
-    print(request.cookies)
     return render_template('admin-products.html')

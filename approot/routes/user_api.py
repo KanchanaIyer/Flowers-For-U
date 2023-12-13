@@ -58,8 +58,9 @@ def register():
 def status():
     """
     Endpoint for getting the status of the current user. By checking for username in the session.
-    :return:
+    :return: 200 if logged in, 401 if not logged in
     """
+
     if get_session().get('user'):
         return success_response("Logged in", {})
     else:
@@ -70,7 +71,7 @@ def status():
 def info():
     """
     Endpoint for getting the info of the current user.
-    :return:
+    :return: 200 with user info if logged in, 401 if not logged in
     """
     if get_session().get('user_id'):
         user = UserManager.get_user_by_id(get_session()['user_id'])

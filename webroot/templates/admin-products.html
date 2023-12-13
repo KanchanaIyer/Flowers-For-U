@@ -150,7 +150,8 @@
                         }
                     })
                     .then(response => response.json())
-                    .then(data => displayProducts(data.data))
+                    .then(data => {displayProducts(JSON.parse(data.data));
+                                    console.log(JSON.parse(data.data));})
                     .catch(error => console.error('Error fetching products:', error));
                 }
 
@@ -261,23 +262,50 @@
                 let productListHtml = '<h2>Product List</h2><ul>';
 
                 for (let i = 0; i < products.length; i++) {
-                const product = products[i];
+                    const product = products[i];
+                    // Calculate compressed image location for thumbnail
+                    let path_array = product.location.split('/');
+                    const filename = path_array.pop();
+                    path_array.push('compressed');
+                    path_array.push(filename);
+                    const compressed_location = path_array.join('/');
 
-                // Displaying each field, excluding description
-                productListHtml += `
-                    <li>
-                        <strong>ID:</strong> ${product.product_id}<br>
-                        <strong>Name:</strong> ${product.name}<br>
-                        <strong>Price:</strong> $${convertToDollars(product.price)}<br>
-                        <strong>Stock:</strong> ${product.stock}<br>
-                        <strong>Location:</strong> <img src="${product.location}" alt="Product Image" style="max-width: 100px; max-height: 100px;"><br>
-                        <button onclick="populateModificationForm(${product.product_id})">Modify</button>
-                    </li>
-                    `;
+                    // Displaying each field, excluding description
+                    productListHtml += `
+                        <li>
+                            <strong>ID:</strong> ${product.product_id}<br>
+                            <strong>Name:</strong> ${product.name}<br>
+                            <strong>Price:</strong> $${convertToDollars(product.price)}<br>
+                            <strong>Stock:</strong> ${product.stock}<br>
+                            <strong>Location:</strong> <img src="${compressed_location}" alt="Product Image" style="max-width: 100px; max-height: 100px;"><br>
+                            <button onclick="populateModificationForm(${product.product_id})">Modify</button>
+                            <button onclick="deleteProduct(${product.product_id})">Delete</button>
+                        </li>
+                        `;
                 }
 
                 productListHtml += '</ul>';
                 document.getElementById('productList').innerHTML = productListHtml;
+            }
+
+            function deleteProduct(productId) {
+                fetch(`/api/products/${productId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Cookie': document.cookie
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Product deleted successfully');
+                        getProducts(currentFilters, currentOffset, currentLimit);
+                    } else {
+                        // Handle errors
+                        alert('Error deleting product');
+                    }
+                })
+                .catch(error => console.error('Error deleting product:', error));
             }
 
             async function populateModificationForm(productId) {

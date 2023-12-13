@@ -3,6 +3,7 @@ from functools import wraps
 
 import mariadb
 import werkzeug.exceptions
+import werkzeug.datastructures
 from flask import jsonify, request
 import json
 import requests
@@ -15,14 +16,16 @@ from approot.sessions import get_session
 from approot.data_managers.errors import InvalidActionError, InvalidMimetypeError, NotFoundError
 from approot.database import models
 from approot.database.database_manager import database_transaction_helper
+from PIL import Image
 
 UPLOAD_FOLDER = SERVER_ROOT / 'webroot/static/images/products'
+COMPRESSED_FOLDER = SERVER_ROOT / 'webroot/static/images/products/compressed'
 SERVER_URL_ROOT = '/images/products'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 ALLOWED_MIME_TYPES = {'image/png', 'image/jpeg', 'image/gif'}
 
 
-def generate_unique_filename(filename):
+def generate_unique_filename(filename: str) -> str:
     """
     Generates a unique filename for a file It will keep hashing the filename until it is unique
     :param filename: Name of the file to generate a unique filename for
@@ -35,7 +38,7 @@ def generate_unique_filename(filename):
         return filename
 
 
-def allowed_file(filename):
+def allowed_file(filename: str) -> bool:
     """
     Checks if a file is allowed to be uploaded
     :param filename: Name of the file to check
@@ -45,7 +48,7 @@ def allowed_file(filename):
         filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-def save_image_to_disk_by_url(url):
+def save_image_to_disk_by_url(url: str) -> str | None:
     """
     Saves an image to disk
     :param url: URL of the image to save
@@ -60,9 +63,20 @@ def save_image_to_disk_by_url(url):
             logging.debug(f"Saving image to disk. Size: {len(response.content)} bytes")
             filename = secure_filename(generate_unique_filename(response.url.rsplit('/', 1)[1]))
             filepath = UPLOAD_FOLDER / filename
-            with open(filepath, 'wb') as f:
-                logging.debug(f"Writing to file: {filepath}")
-                f.write(response.content)
+
+            if len(response.content) > 10000000:  # Compress image to fit within 10MB
+                image = Image.open(response.raw)
+                image.thumbnail((1280, 1280))
+                image.save(filepath, optimize=True, quality=50)
+            else:  # Save image as is
+                with open(filepath, 'wb') as f:
+                    logging.debug(f"Writing to file: {filepath}")
+                    f.write(response.content)
+
+            # Save a low res version of the image for thumbnails
+            image = Image.open(filepath)
+            image.thumbnail((128, 128))
+            image.save(COMPRESSED_FOLDER / filename, optimize=True, quality=50)
 
             server_url = f"{SERVER_URL_ROOT}/{filename}"
             logging.debug(f"Server URL: {server_url}")
@@ -73,7 +87,7 @@ def save_image_to_disk_by_url(url):
         return None
 
 
-def save_image_to_disk_by_file(image):
+def save_image_to_disk_by_file(image: werkzeug.datastructures.FileStorage) -> str | None:
     """
     Saves an image to disk
     :param image: Image to save
@@ -84,13 +98,58 @@ def save_image_to_disk_by_file(image):
         if mimetype in ALLOWED_MIME_TYPES:
             filename = secure_filename(generate_unique_filename(image.filename))
             filepath = UPLOAD_FOLDER / filename
-            image.save(filepath)
+
+            if image.content_length > 10000000:  # Compress image to fit within 10MB
+                image = Image.open(image.stream)
+                image.thumbnail((1280, 1280))
+                image.save(filepath, optimize=True, quality=50)
+            else:  # Save image as is
+                image.save(filepath)
+
             server_url = f"{SERVER_URL_ROOT}/{filename}"
+            # Save a low-res version of the image for thumbnails
+            image = Image.open(filepath)
+            image.thumbnail((128, 128))
+            image.save(COMPRESSED_FOLDER / filename, optimize=True, quality=50)
+
             return server_url
         else:
             raise InvalidMimetypeError(f"Invalid mimetype: {mimetype}")
     else:
         return None
+
+
+def remove_image_from_disk(image_url):
+    """
+    Removes an image from disk
+    :param image_url: Server URL of the image to remove
+    :return: None
+    """
+    if image_url:
+        filename = image_url.rsplit('/', 1)[1]
+        filepath = UPLOAD_FOLDER / filename
+        compressed_filepath = COMPRESSED_FOLDER / filename
+        if filepath.exists():
+            filepath.unlink()
+            if compressed_filepath.exists():
+                compressed_filepath.unlink()
+            return True
+    return False
+
+
+def rebuild_compressed_images():
+    """
+    Rebuilds the compressed images from the full size images
+    :return: None
+    """
+    for image in COMPRESSED_FOLDER.glob('*'):
+        image.unlink()
+
+    for image in UPLOAD_FOLDER.glob('*'):
+        if image.is_file():
+            img = Image.open(image)
+            img.thumbnail((128, 128))
+            img.save(COMPRESSED_FOLDER / image.name, optimize=True, quality=50)
 
 
 VALID_FILTERS = ['name', 'price', 'stock']
@@ -104,6 +163,12 @@ FILTER_MAP = {
 
 
 def handle_error_flask(func):
+    """
+    Decorator for handling errors in Flask API routes returns JSON response
+    :param func:
+    :return:
+    """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         try:
@@ -118,10 +183,17 @@ def handle_error_flask(func):
             return handle_validation_error(e)
         except Exception as e:
             return handle_unknown_error(e)
+
     return wrapper
 
 
 def validate_key_(func):
+    """
+    Decorator for validating the user key
+    :param func:
+    :return:
+    """
+
     @wraps(func)
     def wrapper(*args, **kwargs):
         user_key = request.cookies.get('key')
@@ -137,7 +209,7 @@ def validate_key_(func):
     return wrapper
 
 
-def create_filter_query(filters: list[models.Filter]):
+def create_filter_query(filters: list[models.Filter]) -> str:
     """
     Creates a query string based on the filters provided
     :param filters: List of filters to apply
@@ -259,3 +331,7 @@ class ReviewManager:
             raise e
         except NotFoundError as e:
             raise e
+
+
+if __name__ == "__main__":
+    rebuild_compressed_images()

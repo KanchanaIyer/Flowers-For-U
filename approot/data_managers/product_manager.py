@@ -3,6 +3,7 @@ import logging
 
 from approot.database.database_manager import database_transaction_helper
 from approot.data_managers.errors import NotFoundError, InvalidActionError
+from approot.database.models import Product, Filter
 from approot.utils.utils import create_filter_query
 
 
@@ -14,7 +15,7 @@ class ProductManager:
 
     @staticmethod
     @database_transaction_helper
-    def get_all_products(filters=None, limit=10, offset=0, cursor=None, database=None):
+    def get_all_products(filters: list[Filter] = None, limit: int = 10, offset: int = 0, cursor=None, database=None) -> list[Product]:
         """
         Gets all products from the database based on the provided filters, limit and offset
         :param list[Filter] filters:
@@ -22,7 +23,10 @@ class ProductManager:
         :param int offset: Offset to start the query at
         :param cursor:
         :param database:
-        :return: Flask Response object containing the status of the request and any data
+        :return: List of Product objects
+        :raises NotFoundError: If no products are found which match the provided filters or limit/offset
+        :raises InvalidActionError: If the provided filters are invalid
+        :raises mariadb.Error: If there is an error with the database
         """
         try:
             n_offset = limit * offset  # Calculate the offset based on the limit and offset provided
@@ -35,7 +39,7 @@ class ProductManager:
             if not data or all(all(not x for x in obj.values()) for obj in data):
                 raise NotFoundError("No products found which match the provided filters or limit/offset")
 
-            return data
+            return [Product.from_dict(product) for product in data]
 
         except InvalidActionError as e:
             raise e
@@ -44,13 +48,15 @@ class ProductManager:
 
     @staticmethod
     @database_transaction_helper
-    def add_product(product_data, cursor=None, database=None):
+    def add_product(product_data: dict, cursor=None, database=None) -> dict:
         """
         Adds a product to the database
         :param dict product_data: dict containing the product data
         :param cursor:
         :param database:
-        :return: Flask Response object containing the status of the request
+        :return: Empty dict
+        :raises KeyError: If the provided product_data is missing any required fields
+        :raises mariadb.Error: If there is an error with the database
         """
         try:
             logging.debug(product_data)
@@ -65,36 +71,40 @@ class ProductManager:
 
     @staticmethod
     @database_transaction_helper
-    def get_product_by_id(product_id, cursor=None, database=None):
+    def get_product_by_id(product_id: int, cursor=None, database=None) -> Product:
         """
         Gets a product from the database by its ID
         :param int product_id: ID of the product to get
         :param cursor:
         :param database:
-        :return: Flask Response object containing the status of the request and any data
+        :return: Product object
+        :raises NotFoundError: If no product is found with the provided ID
+        :raises mariadb.Error: If there is an error with the database
         """
         try:
             cursor.execute("SELECT * FROM products WHERE product_id = ?", (product_id,))
-            data = cursor.fetchall()
+            data = cursor.fetchone()
 
             if data is None:
                 raise NotFoundError("No product found with the provided ID. Cannot show")
 
-            return data
+            return Product.from_dict(data)
 
         except NotFoundError as e:
             raise e
 
     @staticmethod
     @database_transaction_helper
-    def update_product(product_id, product_data, cursor=None, database=None):
+    def update_product(product_id: int, product_data: dict, cursor=None, database=None) -> dict:
         """
         Updates a product in the database
         :param int product_id: ID of the product to update
         :param dict product_data: Data to update the product with
         :param cursor:
         :param database:
-        :return: Flask Response object containing the status of the request
+        :return: Empty dict
+        :raises NotFoundError: If no product is found with the provided ID
+        :raises mariadb.Error: If there is an error with the database
         """
         try:
             cursor.execute("SELECT * FROM products WHERE product_id = ? FOR UPDATE", (product_id,))
@@ -115,13 +125,15 @@ class ProductManager:
 
     @staticmethod
     @database_transaction_helper
-    def delete_product(product_id, cursor=None, database=None):
+    def delete_product(product_id: int, cursor=None, database=None) -> dict:
         """
         Deletes a product from the database
         :param int product_id: ID of the product to delete
         :param cursor:
         :param database:
-        :return: Flask Response object containing the status of the request
+        :return: Empty dict
+        :raises NotFoundError: If no product is found with the provided ID
+        :raises mariadb.Error: If there is an error with the database
         """
         try:
             cursor.execute("SELECT * FROM products WHERE product_id = ? FOR UPDATE", (product_id,))
@@ -139,14 +151,17 @@ class ProductManager:
 
     @staticmethod
     @database_transaction_helper
-    def update_product_stock(product_id, data, cursor=None, database=None):
+    def update_product_stock(product_id: int, data: dict, cursor=None, database=None) -> dict:
         """
         Updates the stock of a product in the database
         :param product_id: ID of the product to update
         :param data: Dict containing the action to perform and the quantity to perform it with
         :param cursor:
         :param database:
-        :return: Flask Response object containing the status of the request
+        :return: Empty dict
+        :raises NotFoundError: If no product is found with the provided ID
+        :raises InvalidActionError: If the provided action is invalid
+        :raises mariadb.Error: If there is an error with the database
         """
         try:
             cursor.execute("SELECT * FROM products WHERE product_id = ?", (product_id,))
@@ -178,14 +193,16 @@ class ProductManager:
 
     @staticmethod
     @database_transaction_helper
-    def buy_product(product_id, data, cursor=None, database=None):
+    def buy_product(product_id: int, data: dict, cursor=None, database=None) -> dict:
         """
         'Buys' a product from the database by updating the stock
         :param product_id: ID of the product to buy
         :param data: Dict containing the quantity to buy
         :param cursor:
         :param database:
-        :return: Flask Response object containing the status of the request
+        :return: Empty dict
+        :raises NotFoundError: If no product is found with the provided ID
+        :raises mariadb.Error: If there is an error with the database
         """
         try:
             cursor.execute("SELECT stock FROM products WHERE product_id = ? FOR UPDATE", (product_id,))

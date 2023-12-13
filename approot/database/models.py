@@ -3,8 +3,27 @@ from dataclasses import dataclass
 @dataclass
 class Product:
     name: str
-    price: float
+    price: int
     description: str
+    stock: int
+    location: str = None
+    product_id: int = None
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        if not data:
+            return None
+        return cls(**data)
+
+    def to_dict(self):
+        return {
+            'name': self.name,
+            'price': self.price,
+            'description': self.description,
+            'stock': self.stock,
+            'location': self.location,
+            'product_id': self.product_id
+        }
 
 
 @dataclass

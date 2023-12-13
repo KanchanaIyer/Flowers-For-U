@@ -16,13 +16,14 @@ class UserManager:
 
     @staticmethod
     @database_transaction_helper
-    def get_user_by_id(user_id, cursor=None, database=None):
+    def get_user_by_id(user_id: int, cursor=None, database=None) -> User:
         """
         Gets a user from the database by their id
         :param int user_id: Id of the user to get
         :param cursor:
         :param database:
-        :return: Flask Response object containing the status of the request and a dict representing the user (this may be changed to a user object in the future)
+        :return: User object representing the user that was retrieved
+        :raises NotFoundError: If no user is found with the provided id
         """
         try:
             cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
@@ -35,14 +36,16 @@ class UserManager:
 
     @staticmethod
     @database_transaction_helper
-    def login(username, password, cursor=None, database=None):
+    def login(username: str, password: str, cursor=None, database=None) -> User:
         """
         Logs a user in by checking the provided credentials against the database
         :param str username: Username of the user to log in
         :param str password: Password of the user to log in
         :param cursor:
         :param database:
-        :return: Tuple of Flask Response object containing the status of the request and a dict representing the user (this may be changed to a user object in the future), or None if login failed
+        :return: User object representing the user that was logged in
+        :raises KeyError: If a required field is missing
+        :raises NotFoundError: If no user is found with the provided credentials
         """
         try:
             # print(username, password)
@@ -80,7 +83,7 @@ class UserManager:
 
     @staticmethod
     @database_transaction_helper
-    def register(username, password, email, cursor=None, database=None):
+    def register(username: str, password: str, email: str, cursor=None, database=None) -> User:
         """
         Registers a user by inserting the provided credentials into the database and validating them
         :param str username: Username of the user to register
@@ -88,7 +91,9 @@ class UserManager:
         :param str email: Email of the user to register
         :param cursor:
         :param database:
-        :return: Flask Response object containing the status of the request and a dict representing the user (this may be changed to a user object in the future), or None if registration failed
+        :return: User object representing the user that was registered
+        :raises KeyError: If a required field is missing
+        :raises mariadb.IntegrityError: If the username or email already exists in the database
         """
         if not all((username, password, email)):
             raise KeyError("Missing required field")

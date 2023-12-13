@@ -26,6 +26,11 @@ def get_database_connection():
 
 
 def database_transaction_helper(func):
+    """
+    Decorator for handling database transactions. Sets up and tears down the database connection and cursor.
+    :param func:
+    :return:
+    """
     @wraps(func)
     def wrapper(*args, **kwargs):
         with get_database_connection() as (database, cursor):
