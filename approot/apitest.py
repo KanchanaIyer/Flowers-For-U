@@ -1,14 +1,18 @@
 import logging
+import sys
 
 from flask import Flask
 from flask_cors import CORS
-from approot.config.config import get_flask_config
 from approot.database.database import init_app
 
 from approot.routes.pages import webpages
 from approot.routes.product_api import product_api as p_api
 from approot.routes.user_api import user_api as u_api
 
+# Add config to the app
+sys.path.append('../')
+
+from config.config import get_flask_config
 flask_config = get_flask_config()
 app = Flask(__name__,
             static_url_path='',

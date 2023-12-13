@@ -38,3 +38,9 @@ def get_log_config():
     """
     config = get_config(Path(__file__).parents[0] / 'config.ini')
     return config['Logging']
+
+
+if __name__ == '__main__':
+    print(get_database_config())
+    print(get_flask_config())
+    print(get_log_config())

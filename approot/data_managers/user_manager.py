@@ -6,7 +6,6 @@ from approot.crypto.crypto import check_password, hash_password
 from approot.database.database_manager import database_transaction_helper
 from approot.data_managers.errors import NotFoundError
 from approot.database.models import User
-from approot.utils.utils import success_response, handle_not_found_error
 
 
 class UserManager:
