@@ -1,8 +1,11 @@
 Flowers2/**
 approot/Flowers/**
+webroot/static/images/products/
 logs/**
 .idea/**
 **/__pycache__/**
 **/*.conf
 **/*.ini
+**/*.wsgi
 /.idea/
+doc/**
