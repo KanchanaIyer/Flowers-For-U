@@ -1,10 +1,8 @@
 import mariadb
-from mariadb import connect
-from mariadb import Error
-import approot.config.config
+import config.config
 import logging
 
-from approot.config import config
+from config import config
 from flask import g
 
 logging.getLogger(__name__)

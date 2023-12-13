@@ -3,6 +3,7 @@ from approot.crypto.crypto import generate_session_key
 from approot.database.models import User
 
 
+
 def create_session(user: User):
     """
     Creates a session for the user, if a session already exists it will be overwritten
@@ -17,7 +18,7 @@ def create_session(user: User):
     # Set session expiration
     session.permanent = True
     session.modified = True
-    session.permanent_session_lifetime = 3600  # 1 hour
+    session.permanent_session_lifetime = 3600 # 1 hour
     return session
 
 

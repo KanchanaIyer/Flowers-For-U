@@ -34,4 +34,3 @@ error_handler.setFormatter(error_formatter)
 error_logger.addHandler(error_handler)
 
 
-from apitest import app as application

@@ -1,9 +1,8 @@
-from flask import Blueprint, request, make_response
+from flask import Blueprint, request
 
-from approot.crypto.crypto import generate_session_key
 from approot.data_managers.user_manager import UserManager
 from approot.sessions import create_session, delete_session, get_session
-from approot.utils.utils import handle_json_error, error_response, success_response, handle_error_flask
+from approot.utils.utils import error_response, success_response, handle_error_flask
 
 user_api = Blueprint('user_api', __name__, url_prefix='/api/user')
 
