@@ -6,4 +6,6 @@ logs/**
 **/__pycache__/**
 **/*.conf
 **/*.ini
+**/*.wsgi
 /.idea/
+doc/**

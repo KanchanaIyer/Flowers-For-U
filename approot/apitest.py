@@ -1,5 +1,7 @@
+import importlib.util
 import logging
 import sys
+from pathlib import Path
 
 from flask import Flask
 from flask_cors import CORS
@@ -10,10 +12,10 @@ from approot.routes.product_api import product_api as p_api
 from approot.routes.user_api import user_api as u_api
 
 # Add config to the app
-sys.path.append('../')
+from approot.importer import config
 
-from config.config import get_flask_config
-flask_config = get_flask_config()
+
+flask_config = config.get_flask_config()
 app = Flask(__name__,
             static_url_path='',
             static_folder='../webroot/static',
@@ -26,7 +28,7 @@ app.permanent_session_lifetime = int(flask_config['sessionLifetime'])
 app.register_blueprint(webpages)
 app.register_blueprint(p_api)
 app.register_blueprint(u_api)
-init_app(app)
+#init_app(app)
 
 CORS(app, supports_credentials=True)  # Allow cross-origin requests
 if __name__ == '__main__':
