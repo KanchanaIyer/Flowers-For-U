@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Product Management</title>
+    </head>
+    <body>
+
+        <header>
+            <h1>Product Management</h1>
+            <div>
+                <span>
+                    <a href="{{ url_for('webpages.home') }}">Home</a>
+                    <a href="{{ url_for('webpages.admin_products') }}">Product Management</a>
+                    <a href="/">Order Management</a>
+                    <a href="/">User Management</a>
+                    <a href="{{ url_for('webpages.login') }}">Login</a>
+                    <a href="{{ url_for('webpages.logout') }}">Logout</a>
+                </span>
+            </div>
+            <div>
+                <span id="loginStatusContainer">
+                    <!-- Login status will be displayed here -->
+                </span>
+            </div>
+
+            <div>
+                <span>
+                    <button onclick="document.getElementById('addSection').style.display = 'block';">Add Product</button>
+                    <button onclick="document.getElementById('addSection').style.display = 'none';">Hide Form</button>
+                </span>
+            </div>
+
+            <div>
+                <span>
+                    <button onclick="document.getElementById('modifySections').style.display = 'block';">Modify Product</button>
+                    <button onclick="document.getElementById('modifySections').style.display = 'none';">Hide Form</button>
+                </span>
+            </div>
+
+        </header>
+
+        <main>
+            <section id="filterSection">
+                <h2>Filters</h2>
+                <div id="filterInputs">
+                    <select id="filterComparator">
+                        <option value="AND">AND</option>
+                        <option value="OR">OR</option>
+                    </select>
+                    <label for="negateFilter">Negate</label>
+                    <input type="checkbox" id="filterNegation">
+                    <select id="filterField" onchange="updateFilterRules()">
+                        <option value="name">Name</option>
+                        <option value="price">Price</option>
+                        <option value="stock">Stock</option>
+                    </select>
+                    <select id="filterRule">
+                        <!-- Add based on field selected -->
+                    </select>
+                    <input type="text" id="filterValue" placeholder="Enter value">
+                    <button onclick="addFilter()">Add Filter</button>
+                </div>
+                <div id="activeFilters"></div>
+                <button onclick="applyFilters()">Apply Filters</button>
+            </section>
+
+
+            <section id="addSection">
+                <h2>Add Product</h2>
+                <form id="addProductForm">
+                    <!-- Form to add a new product -->
+                    <label for="productName">Name:</label>
+                    <input type="text" id="productName" required>
+                    <label for="productPrice">Price:</label>
+                    <input type="number" id="productPrice" step="0.01" required>
+                    <label for="productDescription">Description:</label>
+                    <input type="text" id="productDescription">
+                    <label for="productStock">Stock:</label>
+                    <input type="number" id="productStock" required>
+                    <label for="productImage">Image:</label>
+                    <input type="file" id="productImage" > <!-- This should be a jpg or png -->
+                    <label for="productImageUrl">Image URL:</label>
+                    <input type="url" id="productImageUrl" > <!-- This should be a jpg or png -->
+                    <button type="submit">Add Product</button>
+                </form>
+            </section>
+
+            <section id="modifySections">
+                <h2>Modify Product</h2>
+                <form id="modifyProductForm" enctype="multipart/form-data">
+                    <input type="hidden" id="modProductId" name="productId">
+                    <input type="text" id="modProductName" name="name" placeholder="Product Name">
+                    <input type="number" id="modProductPrice" name="price" placeholder="Price" step="0.01">
+                    <input type="text" id="modProductDescription" name="description" placeholder="Description">
+                    <input type="number" id="modProductStock" name="stock" placeholder="Stock">
+                    <input type="file" id="modProductImage" name="image">
+                    <button type="submit">Modify Product</button>
+                </form>
+            </section>
+
+            <section id="productSection">
+                <div id="productList">
+                    <!-- Product list will be displayed here -->
+                </div>
+                <div>
+                    <button onclick="changeOffset(-1)">Previous</button>
+                    <button onclick="changeOffset(1)">Next</button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>&COPY; 2023 FLOWERS4U</p>
+        </footer>
+
+        <script>
+            let currentOffset = 0;
+            let currentLimit = 10;
+            let currentFilters = [];
+            const FILTER_MAP = {
+                'name': ['contains'],
+                'price': ['equals', 'greater', 'less'],
+                'stock': ['equals', 'greater', 'less', 'exists'],
+            };
+
+            // Function to fetch products from the Flask API
+            function getProducts(filters = [], offset = 0, limit = 10) {
+                /*
+                const filter = {
+                field: 'name',
+                rule: 'contains',
+                value: 'example',
+            };
+                let filters = JSON.stringify([JSON.stringify(filter), JSON.stringify(filter)]);
+                */
+
+                const queryString = Object.entries({
+                        filters: JSON.stringify(filters),
+                        offset: JSON.stringify(offset),
+                        limit: JSON.stringify(limit),
+                    })
+                    // Convert each key-value pair to a string separated by an '=' IE: ['filters', '[]'] becomes 'filters=[]'
+                    .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`) // Encode the key and value for each param
+                    .join('&');
+
+                    fetch(`/api/products/?${queryString}`, {
+                        headers: {
+                            'Cookie': document.cookie
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {displayProducts(JSON.parse(data.data));
+                                    console.log(JSON.parse(data.data));})
+                    .catch(error => console.error('Error fetching products:', error));
+                }
+
+            document.getElementById('addProductForm').addEventListener('submit', addProduct);
+            // Function to add a new product using the Flask API
+            function addProduct(event) {
+                event.preventDefault()
+
+                const productName = document.getElementById('productName').value;
+                const productPrice = document.getElementById('productPrice').value;
+                const productDescription = document.getElementById('productDescription').value;
+                const productStock = document.getElementById('productStock').value;
+                let productImageUrl = document.getElementById('productImageUrl').value;
+
+                // Fail if any required fields are empty
+                if (!productName || !productPrice || !productStock) {
+                    return;
+                }
+
+                if (!productImageUrl) {  // If no image URL is provided, set it to null so we dont send an empty string
+                    productImageUrl = null;
+                    return;
+                }
+
+                let productData = {
+                    name: productName,
+                    price: convertToCents(productPrice),
+                    description: productDescription,
+                    stock: productStock,
+                    image: productImageUrl
+                };
+
+                const json = JSON.stringify(productData);
+                const jsonBlob = new Blob([json], {
+                    type: 'application/json'
+                });
+                const file = document.getElementById('productImage').files[0];
+                const formData = new FormData();
+                formData.append('product', json);
+                formData.append('image', file);
+
+                console.log(document.cookie)
+                fetch('/api/products/', {
+                    method: 'POST',
+                    headers: {
+                        //'Content-Type': 'application/json',
+                        'Cookie': document.cookie
+                    },
+                    body: formData,
+
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Product added successfully, refresh the product list
+                    getProducts(currentFilters, currentOffset, currentLimit);
+                })
+                .catch(error => console.error('Error adding product:', error));
+            }
+
+            document.getElementById('modifyProductForm').addEventListener('submit', modifyProduct);
+
+            async function modifyProduct(event) {
+                event.preventDefault();
+
+                const formData = new FormData();
+                const form = event.target;
+                const productId = form.modProductId.value;
+
+                const productData = {
+                    name: form.modProductName.value,
+                    price: convertToCents(form.modProductPrice.value),
+                    description: form.modProductDescription.value,
+                    stock: form.modProductStock.value
+                };
+                formData.append('product', JSON.stringify(productData));
+
+
+                try {
+                    const response = await fetch(`/api/products/${productId}/`, {
+                        method: 'PUT',
+                        body: formData,
+                    });
+
+                    const result = await response.json();
+                    if (result.status === 'success') {
+                        alert('Product updated successfully');
+                        getProducts(currentFilters, currentOffset, currentLimit);
+                    } else {
+                        // Handle errors
+                        alert('Error updating product');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
+            }
+
+
+            function convertToCents(dollars) {
+                // Convert dollars to cents use string to avoid floating point errors
+                return Math.round(dollars * 100);
+            }
+            function convertToDollars(cents) {
+                return (cents / 100).toFixed(2);
+            }
+
+            // Function to display products in the webpage
+            function displayProducts(products) {
+                let productListHtml = '<h2>Product List</h2><ul>';
+
+                for (let i = 0; i < products.length; i++) {
+                    const product = products[i];
+                    // Calculate compressed image location for thumbnail
+                    let path_array = product.location.split('/');
+                    const filename = path_array.pop();
+                    path_array.push('compressed');
+                    path_array.push(filename);
+                    const compressed_location = path_array.join('/');
+
+                    // Displaying each field, excluding description
+                    productListHtml += `
+                        <li>
+                            <strong>ID:</strong> ${product.product_id}<br>
+                            <strong>Name:</strong> ${product.name}<br>
+                            <strong>Price:</strong> $${convertToDollars(product.price)}<br>
+                            <strong>Stock:</strong> ${product.stock}<br>
+                            <strong>Location:</strong> <img src="${compressed_location}" alt="Product Image" style="max-width: 100px; max-height: 100px;"><br>
+                            <button onclick="populateModificationForm(${product.product_id})">Modify</button>
+                            <button onclick="deleteProduct(${product.product_id})">Delete</button>
+                        </li>
+                        `;
+                }
+
+                productListHtml += '</ul>';
+                document.getElementById('productList').innerHTML = productListHtml;
+            }
+
+            function deleteProduct(productId) {
+                fetch(`/api/products/${productId}/`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Cookie': document.cookie
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        alert('Product deleted successfully');
+                        getProducts(currentFilters, currentOffset, currentLimit);
+                    } else {
+                        // Handle errors
+                        alert('Error deleting product');
+                    }
+                })
+                .catch(error => console.error('Error deleting product:', error));
+            }
+
+            async function populateModificationForm(productId) {
+                try {
+                    const response = await fetch(`/api/products/${productId}/`);
+                    let product = await response.json();
+                    product = product.data[0]
+                    alert(JSON.stringify(product));
+                    if (product) {
+                        document.getElementById('modProductId').value = product.product_id;
+                        document.getElementById('modProductName').value = product.name;
+                        document.getElementById('modProductPrice').value = product.price;
+                        document.getElementById('modProductDescription').value = product.description;
+                        document.getElementById('modProductStock').value = product.stock;
+                        // Reset or update the image file input if necessary
+                    }
+                } catch (error) {
+                    console.error('Error fetching product:', error);
+                }
+            }
+
+            function changeOffset(direction) {
+                    currentOffset = currentOffset + direction;
+                    getProducts(currentFilters, currentOffset, currentLimit);
+
+            }
+
+            function addFilter(){
+                const filterField = document.getElementById('filterField').value;
+                const filterRule = document.getElementById('filterRule').value;
+                const filterValue = document.getElementById('filterValue').value;
+                const  filterNegation = document.getElementById('filterNegation').checked;
+                const filterComparator = document.getElementById('filterComparator').value;
+                console.log(filterField, filterRule, filterValue);
+                console.log(currentFilters);
+
+                if (!filterValue) {
+                    return;
+                }
+
+                let filter;
+                if (filterField === 'price') {
+                    //Convert Prices to strings and then cents
+                    let FixedfilterValue = convertToCents(filterValue);
+                    filter = { field: filterField, rule: filterRule, value: FixedfilterValue,
+                    negate: filterNegation, comparator: filterComparator};
+                    console.log("Value Fixed to $", FixedfilterValue, "cents")
+                }
+                else {
+                    filter = { field: filterField, rule: filterRule, value: filterValue };
+                }
+
+                console.log(filter)
+                currentFilters.push(filter);
+                updateFilterDisplay();
+            }
+
+            function applyFilters() {
+                getProducts(currentFilters, currentOffset, currentLimit);
+            }
+
+            function removeFilter(index) {
+                currentFilters.splice(index, 1); // Remove the filter at the specified index
+                updateFilterDisplay(); // Update the filter display
+                getProducts(currentFilters, currentOffset, currentLimit); // Reload the product list with updated filters
+            }
+
+            function updateFilterRules() {
+                const filterField = document.getElementById('filterField').value;
+                const filterRuleSelect = document.getElementById('filterRule');
+                filterRuleSelect.innerHTML = ''; // Clear existing rules
+
+                FILTER_MAP[filterField].forEach(rule => {
+                    const ruleOption = document.createElement('option');
+                    ruleOption.value = rule;
+                    ruleOption.textContent = rule;
+                    filterRuleSelect.appendChild(ruleOption);
+                });
+            }
+
+
+
+            function updateFilterDisplay() {
+                const filterContainer = document.getElementById('activeFilters');
+                filterContainer.innerHTML = ''; // Clear existing filters
+
+                currentFilters.forEach((filter, index) => {
+                    const filterDiv = document.createElement('div');
+                    let filterValue = filter.value;
+                    if (filter.field === 'price') {
+                        filterValue = convertToDollars(filter.value);
+                    }
+                    filterDiv.textContent = `${filter.comparator} ${(filter.negate) ? 'NOT' : ''} ${filter.field} ${filter.rule} ${(filter.field === 'price') ? '$': ''}${filterValue}`;
+                    const removeButton = document.createElement('button');
+                    removeButton.textContent = 'Remove';
+                    removeButton.onclick = function() { removeFilter(index); };
+                    filterDiv.appendChild(removeButton);
+                    filterContainer.appendChild(filterDiv);
+                });
+            }
+
+            async function updateLoginStatus() {
+                fetch('/api/user/info/', {
+                    headers: {
+                        'Cookie': document.cookie
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.data) {
+                        // User is logged in
+                        document.getElementById('loginStatusContainer').innerHTML = `Logged in as ${data.data.username}`;
+                    } else {
+                        // User is not logged in
+                        document.getElementById('loginStatusContainer').innerHTML = 'Not logged in';
+                    }
+                })// Returns 401 if not logged in
+                .catch(error => console.error('Error fetching user info:', error));
+            }
+
+
+
+            // Fetch products when the page loads
+            document.addEventListener('DOMContentLoaded', function () {
+                updateLoginStatus();
+                updateFilterRules();
+                updateFilterDisplay();
+                getProducts();
+            });
+
+        </script>
+
+    </body>
+
+</html>

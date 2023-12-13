@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Flowers4U - Administration Page</title>
+</head>
+<body>
+    <div id="admin-warning"> <!-- CSS must be used to render this div as a warning box and prevent content from being used -->
+        <h1>WARNING</h1>
+        <p>You are about to enter the administration area of the Flowers4U website. This area is for authorised personnel only. If you are not authorised to be here, please leave now.</p>
+        <p>By clicking the button below, you are confirming that you are authorised to be here.</p>
+        <form action="" method="post" id="auth-form">
+            <input type="submit" value="I am authorised to be here">
+        </form>
+        <script>
+            document.getElementById("auth-form").onsubmit = function(event) {
+                // Hide the warning
+                event.preventDefault()
+                document.getElementById("admin-warning").style.display = "none";
+    }
+        </script>
+    </div>
+
+    <div id="admin-area">
+        <h1>Administration Area</h1>
+        <p>Here you can manage the products and orders for the Flowers4U website.</p>
+        <ul>
+            <li><a href=" {{ url_for('webpages.admin_products') }}">Manage Products</a></li>
+            <li><a href="admin-orders.html">Manage Orders</a></li>
+        </ul>
+
+</body>
+</html>
