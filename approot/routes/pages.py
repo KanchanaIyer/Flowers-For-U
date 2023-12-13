@@ -121,7 +121,9 @@ def register():
             if not redirect_url.startswith(request.host_url):
                 redirect_url = url_for('webpages.home')
 
-            return redirect(redirect_url)
+            res = redirect(redirect_url)
+            res.set_cookie('key', get_session().get('key'), max_age=3600)  # Key expires in an hour
+            return res
 
         else:
             return render_template('register.html', redirect_url=redirect_url, error="Registration failed!")

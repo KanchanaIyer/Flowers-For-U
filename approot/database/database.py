@@ -1,9 +1,16 @@
-import mariadb
-import config.config
-import logging
+from pathlib import Path
 
-from config import config
+import flask.logging
+import mariadb
+import logging
+import importlib.util
+
 from flask import g
+
+config_path = Path(__file__).parent.parent.parent / 'config'
+spec = importlib.util.spec_from_file_location('config', config_path / 'config.py')
+config = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(config)
 
 logging.getLogger(__name__)
 

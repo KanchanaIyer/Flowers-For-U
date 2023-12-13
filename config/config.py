@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 import configparser
 
@@ -36,6 +37,7 @@ def get_log_config():
     Gets the logging configuration from the config.ini file
     :return:
     """
+    logging.critical(Path(__file__).parents[0] / 'config.ini')
     config = get_config(Path(__file__).parents[0] / 'config.ini')
     return config['Logging']
 
