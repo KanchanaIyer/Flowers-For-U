@@ -5,15 +5,15 @@ from pathlib import Path
 
 sys.path.insert(0, '/var/www/Flowers4U/')
 sys.path.insert(0, '/var/www/Flowers4U/approot/Flowers/lib/python3.11/site-packages')
-
+from dotenv import load_dotenv
+load_dotenv('/var/www/Flowers4U/.env')
 # Import config.py
-config_path = Path(__file__).parent.parent / 'config'
-spec = importlib.util.spec_from_file_location('config', config_path / 'config.py')
-config = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(config)
+import approot.utils.config as config
 
-
-log_config = config.get_log_config()
+try:
+    log_config = config.get_config().get_log_config()
+except AttributeError as e:
+    raise Exception(f"Config not found\n{dir(config.get_config())}\n\n\n") from e
 log_folder = log_config['folder']
 
 

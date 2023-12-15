@@ -7,10 +7,11 @@ import importlib.util
 
 from flask import g
 
-config_path = Path(__file__).parent.parent.parent / 'config'
-spec = importlib.util.spec_from_file_location('config', config_path / 'config.py')
-config = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(config)
+from approot.utils import config
+#config_path = Path(__file__).parent.parent.parent / 'config'
+#spec = importlib.util.spec_from_file_location('config', config_path / 'config.py')
+#config = importlib.util.module_from_spec(spec)
+#spec.loader.exec_module(config)
 
 logging.getLogger(__name__)
 
@@ -25,7 +26,11 @@ def init_connection_pool(debug=False):
     :return:
     """
     global pool
-    database_config = config.get_database_config()
+    config_instance = config.Config()
+    logging.critical(config_instance)
+    database_config = config_instance.get_database_config()
+    logging.critical(database_config)
+
     pool = mariadb.ConnectionPool(
         pool_name="FlowerPool",
         pool_size=int(database_config['poolSize']),

@@ -12,10 +12,10 @@ from approot.routes.product_api import product_api as p_api
 from approot.routes.user_api import user_api as u_api
 
 # Add config to the app
-from approot.importer import config
+from approot.utils import config
 
 
-flask_config = config.get_flask_config()
+flask_config = config.get_config().get_flask_config()
 app = Flask(__name__,
             static_url_path='',
             static_folder='../webroot/static',
